@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes"
 import ThemeToggle from "../components/ThemeToggle"
 import NextSnowScreen from "../components/snow/NextSnowScreen"
 import Footer from "@/components/Footer/footer"
+import Header from "@/components/Header/header"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
         >
+          < Header/>
           {/* HEADER */}
           <header className="p-4 flex justify-end">
             <NextSnowScreen />

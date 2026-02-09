@@ -5,9 +5,10 @@ import React, {useMemo} from 'react'
 interface Props {
   index?: number
   imageUrl?: string
+  isDarkMode?: boolean
 }
 
-export default function NextSnowflake({index = 0, imageUrl}: Props) {
+export default function NextSnowflake({index = 0, imageUrl, isDarkMode = false}: Props) {
   const cfg = useMemo(() => {
     const size = Math.floor(Math.random() * 28) + 10
     const opacity = (Math.floor(Math.random() * 6) + 4) / 10
@@ -40,7 +41,9 @@ export default function NextSnowflake({index = 0, imageUrl}: Props) {
     pointerEvents: 'none',
     opacity: cfg.opacity,
     transform: 'translateX(-50%)',
-    animation: `fall ${cfg.fallDuration}ms linear ${cfg.fallDelay}ms forwards`,
+    animation: `fall ${cfg.fallDuration}ms linear ${cfg.fallDelay}ms infinite`,
+    // @ts-ignore
+    ['--snowflake-opacity' as any]: cfg.opacity,
   }
 
   const innerStyle: React.CSSProperties = {
@@ -50,7 +53,7 @@ export default function NextSnowflake({index = 0, imageUrl}: Props) {
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: cfg.size,
-    color: 'white',
+    color: isDarkMode ? '#e0f2ff' : '#333333',
     transformOrigin: '50% 50%',
     animation: `sway ${cfg.swingDuration}ms linear infinite, spin ${cfg.rotationDuration}ms linear infinite`,
     // pass amplitude using CSS variable
@@ -66,7 +69,12 @@ export default function NextSnowflake({index = 0, imageUrl}: Props) {
 
   return (
     <div className="next-snowflake" style={wrapperStyle}>
-      <div className="next-snowflake-inner" style={innerStyle}>{content}</div>
+      <div 
+        className={`next-snowflake-inner ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+        style={innerStyle}
+      >
+        {content}
+      </div>
     </div>
   )
 }

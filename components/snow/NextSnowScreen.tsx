@@ -11,7 +11,7 @@ interface Props {
 
 export default function NextSnowScreen({
   bgUrl = '/ep07/winterBg.jpg',
-  snowCount = 200,
+  snowCount = 75,
   snowImageUrl,
 }: Props) {
   return (

@@ -1,0 +1,110 @@
+/* =======================
+   THEME VARIABLES
+======================= */
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --border: #e5e7eb;
+  --hover-line: #111111;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #f8fafc;
+  --border: #1e293b;
+  --hover-line: #f8fafc;
+}
+
+html.dark {
+  --bg: #0a0a0a;
+  --text: #ffffff;
+  --border: #1e293b;
+  --hover-line: #ffffff;
+}
+
+/* Support for system preference and class-based dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0f172a;
+    --text: #f8fafc;
+    --border: #1e293b;
+    --hover-line: #f8fafc;
+  }
+}
+
+/* =======================
+   HEADER
+======================= */
+.header {
+  width: 100%;
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 64px;
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* =======================
+   LOGO
+======================= */
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* =======================
+   NAVIGATION
+======================= */
+.nav {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 15px;
+  padding: 4px 0;
+}
+
+/* underline animation */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: var(--hover-line);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* =======================
+   THEME TOGGLE
+======================= */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  opacity: 0.8;
+}

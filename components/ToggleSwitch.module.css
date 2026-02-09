@@ -1,54 +1,63 @@
 .toggle-switch {
   position: relative;
-  width: 100px;
-  height: 50px;
+  width: 44px;
+  height: 24px;
 
-  --light: #d8dbe0;
-  --dark: #28292c;
-  --link: rgb(27, 129, 112);
-  --link-hover: rgb(24, 94, 82);
+  /* color tokens */
+  --light: #e5e7eb;
+  --dark: #1f2937;
+  --sun: #facc15;
 }
 
+/* wrapper label */
 .switch-label {
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 50px;
+  height: 100%;
   background-color: var(--dark);
-  border-radius: 25px;
+  border-radius: 9999px;
   cursor: pointer;
-  border: 3px solid var(--dark);
+  display: block;
 }
 
+/* hide native checkbox */
 .checkbox {
   display: none;
 }
 
+/* track */
 .slider {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 25px;
-  transition: 0.3s;
+  inset: 0;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
 }
 
+/* light mode track */
 .checkbox:checked + .slider {
   background-color: var(--light);
 }
 
+/* 🌙 moon (default / dark mode) */
 .slider::before {
   content: "";
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 25px;
-  height: 25px;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  box-shadow: inset 12px -4px 0px 0px var(--light);
   background-color: var(--dark);
-  transition: 0.3s;
+  box-shadow: inset 8px -3px 0 0 var(--light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
 }
 
+/* ☀️ sun (light mode) */
 .checkbox:checked + .slider::before {
-  transform: translateX(50px);
-  box-shadow: none;
+  transform: translateX(20px);
+  background-color: var(--sun);
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.05),
+    0 0 6px rgba(250, 204, 21, 0.8);
 }

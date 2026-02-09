@@ -5,11 +5,25 @@
 :root {
   --bg: #ffffff;
   --fg: #000000;
+  --text: #111111;
+  --border: #e5e7eb;
+  --hover-line: #111111;
 }
 
 html.dark {
   --bg: #0a0a0a;
   --fg: #ffffff;
+  --text: #f8fafc;
+  --border: #1e293b;
+  --hover-line: #f8fafc;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --fg: #f8fafc;
+  --text: #f8fafc;
+  --border: #1e293b;
+  --hover-line: #f8fafc;
 }
 
 html {

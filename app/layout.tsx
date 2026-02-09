@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "next-themes"
 import ThemeToggle from "../components/ThemeToggle"
+import NextSnowScreen from "../components/snow/NextSnowScreen"
+import Footer from "@/components/Footer/footer"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,18 +28,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
         >
+          {/* HEADER */}
           <header className="p-4 flex justify-end">
-            <ThemeToggle />
+            <NextSnowScreen />
           </header>
-          {children}
+
+          {/* MAIN CONTENT */}
+          <main className="min-h-screen">
+            {children}
+          </main>
+
+          {/* FOOTER */}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

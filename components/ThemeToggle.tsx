@@ -1,24 +1,35 @@
 "use client"
 
-import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import styles from "./ToggleSwitch.module.css"
 
-export default function ThemeToggle() {
+type ThemeToggleProps = {
+  className?: string
+}
+
+export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   const { theme, setTheme, systemTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
   if (!mounted) return null
 
-  const currentTheme = theme === 'system' ? systemTheme : theme
+  const currentTheme = theme === "system" ? systemTheme : theme
+  const isDark = currentTheme === "dark"
 
   return (
-    <button
-      onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
-      className="px-3 py-1 rounded-md border dark:border-gray-600"
-      aria-label="Toggle theme"
-    >
-      {currentTheme === 'dark' ? 'Light' : 'Dark'}
-    </button>
+    <div className={`${styles["toggle-switch"]} ${className}`}>
+      <label className={styles["switch-label"]}>
+        <input
+          type="checkbox"
+          className={styles.checkbox}
+          checked={isDark}
+          onChange={() => setTheme(isDark ? "light" : "dark")}
+          aria-label="Toggle theme"
+        />
+        <span className={styles.slider}></span>
+      </label>
+    </div>
   )
 }

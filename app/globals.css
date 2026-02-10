@@ -2,8 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Light mode (default) ===== */
+/* =====================================================
+   🌞 LIGHT MODE (DEFAULT)
+   ===================================================== */
 :root {
+  /* ===== Background & Text ===== */
   --bg-image: linear-gradient(180deg, #e4e9ff, #f1f4ff);
   --bg-color: #ffffff;
   --header-bg: #ffffff;
@@ -11,11 +14,27 @@
   --text: #111111;
   --border: #e5e7eb;
   --hover-line: #111111;
+
   --footer-bg: #1e293b;
   --footer-fg: #ffffff;
+
+  /* =================================================
+     🔘 BUTTON CONFIG (LIGHT MODE)
+     👉 GANTI WARNA / UKURAN BUTTON DI SINI
+     ================================================= */
+  --btn-color: #560bad;          /* warna border & wave */
+  --btn-color-active: #3a0ca3;   /* warna saat active (click) */
+  --btn-text-hover: #ffffff;     /* warna text saat hover */
+
+  --btn-width: 8rem;             /* lebar button */
+  --btn-height: 2.6em;           /* tinggi button */
+  --btn-radius: 0.75rem;         /* border radius */
+  --btn-font-size: 17px;         /* ukuran font */
 }
 
-/* ===== Dark mode via class ===== */
+/* =====================================================
+   🌙 DARK MODE (via class)
+   ===================================================== */
 html.dark {
   --bg-image: none;
   --bg-color: #1a1a1a;
@@ -24,23 +43,40 @@ html.dark {
   --text: #f8fafc;
   --border: #1e293b;
   --hover-line: #f8fafc;
+
   --footer-bg: #0f172a;
   --footer-fg: #f8fafc;
+
+  /* 🔘 Button dark mode */
+  --btn-color: #7c3aed;
+  --btn-color-active: #5b21b6;
+  --btn-text-hover: #ffffff;
 }
 
-/* ===== Dark mode via data-theme ===== */
+/* =====================================================
+   🌙 DARK MODE (via data-theme)
+   ===================================================== */
 [data-theme="dark"] {
   --bg-image: none;
-  --header-bg: #0a0a0a;
   --bg-color: #1a1a1a;
+  --header-bg: #0a0a0a;
   --fg: #ffffff;
   --text: #f8fafc;
   --border: #1e293b;
   --hover-line: #f8fafc;
+
   --footer-bg: #0f172a;
   --footer-fg: #f8fafc;
+
+  /* 🔘 Button dark mode */
+  --btn-color: #7c3aed;
+  --btn-color-active: #5b21b6;
+  --btn-text-hover: #ffffff;
 }
 
+/* =====================================================
+   🌍 GLOBAL HTML & BODY
+   ===================================================== */
 html {
   margin: 0;
   padding: 0;
@@ -57,4 +93,63 @@ body {
   background-color: var(--bg-color);
   color: var(--fg);
   min-height: 100vh;
+}
+
+/* =====================================================
+   🔘 WAVE BUTTON (REUSABLE)
+   Class: .btn-wave
+   ===================================================== */
+.btn-wave {
+  position: relative;
+  isolation: isolate; /* penting: biar animasi tiap button aman */
+  display: inline-block;
+
+  width: var(--btn-width);
+  height: var(--btn-height);
+  line-height: calc(var(--btn-height) - 0.1em);
+
+  overflow: hidden;
+  border-radius: var(--btn-radius);
+  border: 2px solid var(--btn-color);
+
+  font-size: var(--btn-font-size);
+  font-weight: 500;
+  color: var(--btn-color);
+  background: transparent;
+  cursor: pointer;
+
+  transition: color 0.5s ease;
+  z-index: 1;
+}
+
+/* === Wave circle === */
+.btn-wave::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+
+  width: 200px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--btn-color);
+
+  top: 100%;
+  left: 100%;
+  transition: all 0.7s ease;
+}
+
+/* === Hover === */
+.btn-wave:hover {
+  color: var(--btn-text-hover);
+}
+
+.btn-wave:hover::before {
+  top: -30px;
+  left: -30px;
+}
+
+/* === Active (click) === */
+.btn-wave:active::before {
+  background: var(--btn-color-active);
+  transition: background 0s;
 }

@@ -59,10 +59,10 @@ export default function NextSnow({count = 100, imageUrl}: Props) {
         display: block;
       }
       .next-snowflake-inner.light-mode {
-        color: white;
+        color: var(--snowflake-color-light);
       }
       .next-snowflake-inner.dark-mode {
-        color: #e0f2ff;
+        color: var(--snowflake-color-dark);
       }
     `
     document.head.appendChild(style)

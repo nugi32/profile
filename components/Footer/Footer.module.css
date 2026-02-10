@@ -35,7 +35,7 @@
 }
 
 .menuLink {
-  color: white;
+  color: var(--footer-fg);
   text-decoration: none;
   font-weight: 500;
   transition: text-decoration 0.2s ease;

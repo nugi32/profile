@@ -53,7 +53,7 @@ export default function NextSnowflake({index = 0, imageUrl, isDarkMode = false}:
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: cfg.size,
-    color: isDarkMode ? '#e0f2ff' : '#333333',
+    color: isDarkMode ? 'var(--snowflake-color-dark)' : 'var(--snowflake-color-light)',
     transformOrigin: '50% 50%',
     animation: `sway ${cfg.swingDuration}ms linear infinite, spin ${cfg.rotationDuration}ms linear infinite`,
     // pass amplitude using CSS variable

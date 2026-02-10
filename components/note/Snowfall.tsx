@@ -59,7 +59,7 @@ export default function SnowEffect() {
         position: 'fixed',
         width: '100vw',
         height: '100vh',
-        color: 'black',
+        color: 'var(--snowflake-color-light)',
       }}
     />
   )

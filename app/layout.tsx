@@ -28,25 +28,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
-          <Header/>
-          {/* HEADER */}
-          <header className="p-4 flex justify-end">
-            <NextSnowScreen />
-          </header>
+      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          
+          {/* WRAPPER */}
+         <div className="flex flex-col min-h-screen">
 
-          {/* MAIN CONTENT */}
-          <main className="min-h-screen">
-            {children}
-          </main>
+  <Header />
 
-          {/* FOOTER */}
-          <Footer />
+  {/* Snow overlay (visual only) */}
+  <div className="fixed inset-0 pointer-events-none z-10">
+    <NextSnowScreen />
+  </div>
+
+  <main className="relative z-20 flex-grow">
+    {children}
+  </main>
+
+</div>
+
+<Footer />
+
         </ThemeProvider>
       </body>
     </html>

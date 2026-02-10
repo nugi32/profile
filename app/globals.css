@@ -2,38 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== Light mode (default) ===== */
 :root {
-  --bg: #ffffff;
+  --bg-image: linear-gradient(180deg, #e4e9ff, #f1f4ff);
+  --bg-color: #ffffff;
+  --header-bg: #ffffff;
   --fg: #000000;
   --text: #111111;
   --border: #e5e7eb;
   --hover-line: #111111;
+  --footer-bg: #1e293b;
+  --footer-fg: #ffffff;
 }
 
+/* ===== Dark mode via class ===== */
 html.dark {
-  --bg: #0a0a0a;
+  --bg-image: none;
+  --bg-color: #1a1a1a;
+  --header-bg: #0a0a0a;
   --fg: #ffffff;
   --text: #f8fafc;
   --border: #1e293b;
   --hover-line: #f8fafc;
+  --footer-bg: #0f172a;
+  --footer-fg: #f8fafc;
 }
 
+/* ===== Dark mode via data-theme ===== */
 [data-theme="dark"] {
-  --bg: #0f172a;
-  --fg: #f8fafc;
+  --bg-image: none;
+  --header-bg: #0a0a0a;
+  --bg-color: #1a1a1a;
+  --fg: #ffffff;
   --text: #f8fafc;
   --border: #1e293b;
   --hover-line: #f8fafc;
+  --footer-bg: #0f172a;
+  --footer-fg: #f8fafc;
 }
 
 html {
-  background-color: var(--bg);
+  margin: 0;
+  padding: 0;
+  background-image: var(--bg-image);
+  background-color: var(--bg-color);
   color: var(--fg);
   transition: background-color 150ms linear, color 150ms linear;
 }
 
 body {
-  background-color: var(--bg);
+  margin: 0;
+  padding: 0;
+  background-image: var(--bg-image);
+  background-color: var(--bg-color);
   color: var(--fg);
   min-height: 100vh;
 }

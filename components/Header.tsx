@@ -6,11 +6,7 @@ import "./header.css";
 import ThemeToggle from "./ThemeToggle"
 
 export default function Header() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+  
 
   return (
     <header className="header">

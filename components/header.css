@@ -1,44 +1,18 @@
-/* =======================
-   THEME VARIABLES
-======================= */
-:root {
-  --bg: #ffffff;
-  --text: #111111;
-  --border: #e5e7eb;
-  --hover-line: #111111;
-}
-
-[data-theme="dark"] {
-  --bg: #0f172a;
-  --text: #f8fafc;
-  --border: #1e293b;
-  --hover-line: #f8fafc;
-}
-
-html.dark {
-  --bg: #0a0a0a;
-  --text: #ffffff;
-  --border: #1e293b;
-  --hover-line: #ffffff;
-}
-
-/* Support for system preference and class-based dark mode */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #0f172a;
-    --text: #f8fafc;
-    --border: #1e293b;
-    --hover-line: #f8fafc;
-  }
-}
+/* Theme variables inherited from globals.css */
 
 /* =======================
    HEADER
 ======================= */
 .header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
-  background-color: var(--bg);
+  z-index: 50;
+  background-color: var(--header-bg, var(--fg));
   border-bottom: 1px solid var(--border);
+margin-left: -10px;
 }
 
 .header-container {
@@ -92,10 +66,6 @@ html.dark {
 .nav-link:hover::after {
   width: 100%;
 }
-
-/* =======================
-   THEME TOGGLE
-======================= */
 .theme-toggle {
   background: none;
   border: 1px solid var(--border);

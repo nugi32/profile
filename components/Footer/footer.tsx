@@ -15,7 +15,7 @@ export default function Footer() {
 
   <li className="twitter">
     <a href="#">
-      <i className="fa fa-whatsapp"></i>
+      <i className="fa fa-comment"></i>
       <span className="title">Chat</span>
     </a>
   </li>

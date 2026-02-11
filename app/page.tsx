@@ -6,54 +6,45 @@ import './page.css';
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center">
+    <main className="main">
 
-      {/* ================= SECTION ================= */}
+      {/* ================= HERO ================= */}
       <section className="heroSection">
-        {/* Profile Image */}
-        <div className="profileImages">
-          <Image
-            src={ProfileImage}
-            alt="Profile Image"
-            width={140}
-            height={140}
-            priority
-            className="
-              w-[320px]
-              h-[280px]
-              rounded-full
-              object-cover
-              border-4
-              border-indigo-500
-            "
-          />
-        </div>
 
-        {/* Content */}
+<div className="profileImages">
+  <Image
+    src={ProfileImage}
+    alt="Profile Image"
+    priority
+    className="profileImage"
+  />
+</div>
+
+
         <div className="aboutSection">
-          <h3>Hi, I’m Nugi</h3>
-          <h2 className="text-2xl font-semibold">
+          <h3 className="heroGreeting">Hi, I’m Nugi</h3>
+          <h2 className="heroTitle">
             Web3 Developer & Blockchain Engineer
           </h2>
 
-          <p>
+          <p className="heroDescription">
             I build secure, scalable, and user-focused decentralized applications
             using modern blockchain technologies. Specialized in smart contracts,
             DeFi, and Web3 integrations.
           </p>
 
-          <div className="btn-group">
-            <button className="btn-wave">Contact</button>
-            <button className="btn-wave">Projects</button>
-            <button className="btn-wave">Resume</button>
+          <div className="btnGroup">
+            <button className="btnWave">Contact</button>
+            <button className="btnWave">Projects</button>
+            <button className="btnWave">Resume</button>
           </div>
         </div>
       </section>
 
       {/* ================= ABOUT ME ================= */}
       <section className="aboutMeSection">
-        <h2 className="text-2xl font-semibold mb-2">About Me</h2>
-        <p className="text-center max-w-md mx-auto">
+        <h2 className="sectionTitle">About Me</h2>
+        <p className="sectionDescription">
           I am a Web3 Developer with a strong focus on blockchain architecture,
           smart contract development, and decentralized applications (dApps).
           I enjoy solving complex problems, optimizing on-chain performance,
@@ -66,39 +57,41 @@ export default function Home() {
       </section>
 
       {/* ================= SKILLS ================= */}
-      <section className="skilsSection">
-        <div className="web3Section">
-          <h2 className="text-xl font-semibold mb-2">What I Do</h2>
-          <ul className="list-disc list-inside">
+      <section className="skillsSection">
+
+        <div className="skillBox">
+          <h2 className="skillTitle">What I Do</h2>
+          <ul className="skillList">
             <li>Web Development</li>
             <li>UI/UX Design</li>
             <li>Open Source Contribution</li>
           </ul>
         </div>
 
-        <div className="frontendSection">
-          <h2 className="text-xl font-semibold mb-2">Frontend Skills</h2>
-          <ul className="list-disc list-inside">
+        <div className="skillBox">
+          <h2 className="skillTitle">Frontend Skills</h2>
+          <ul className="skillList">
             <li>React.js</li>
             <li>Next.js</li>
             <li>Tailwind CSS</li>
           </ul>
         </div>
 
-        <div className="backendToolsSection">
-          <h2 className="text-xl font-semibold mb-2">Backend & Tools</h2>
-          <ul className="list-disc list-inside">
+        <div className="skillBox">
+          <h2 className="skillTitle">Backend & Tools</h2>
+          <ul className="skillList">
             <li>Node.js</li>
             <li>Express.js</li>
             <li>MongoDB</li>
           </ul>
         </div>
+
       </section>
 
       {/* ================= EXPERIENCE ================= */}
-      <section className="experienceSectio">
-        <h2 className="text-2xl font-semibold mb-2">Experience</h2>
-        <p className="text-center max-w-md mx-auto">
+      <section className="experienceSection">
+        <h2 className="sectionTitle">Experience</h2>
+        <p className="sectionDescription">
           3+ years of experience in web development, specializing in building
           responsive and user-friendly applications. Proven track record of
           delivering high-quality projects on time and within budget.
@@ -107,35 +100,43 @@ export default function Home() {
 
       {/* ================= PROJECTS ================= */}
       <section className="projectsSection">
-        <h2 className="text-2xl font-semibold mb-4">Projects</h2>
+        <h2 className="sectionTitle">Projects</h2>
 
         <div className="projectCardSection">
+
           <div className="projectCard">
-            <h3 className="text-xl font-semibold mb-1">Project Title 1</h3>
-            <p className="text-sm mb-2">
+            <h3 className="projectTitle">Project Title 1</h3>
+            <p className="projectDescription">
               Brief description of Project 1 highlighting key features and technologies used.
             </p>
-            <a href="#" className="text-indigo-500 hover:underline">View Project</a>
-            <a href="#" className="ml-3 text-indigo-500 hover:underline">View Code</a>
+            <div className="projectLinks">
+              <a href="#">View Project</a>
+              <a href="#">View Code</a>
+            </div>
           </div>
 
           <div className="projectCard">
-            <h3 className="text-xl font-semibold mb-1">Project Title 2</h3>
-            <p className="text-sm mb-2">
+            <h3 className="projectTitle">Project Title 2</h3>
+            <p className="projectDescription">
               Brief description of Project 2 highlighting key features and technologies used.
             </p>
-            <a href="#" className="text-indigo-500 hover:underline">View Project</a>
-            <a href="#" className="ml-3 text-indigo-500 hover:underline">View Code</a>
+            <div className="projectLinks">
+              <a href="#">View Project</a>
+              <a href="#">View Code</a>
+            </div>
           </div>
 
           <div className="projectCard">
-            <h3 className="text-xl font-semibold mb-1">Project Title 3</h3>
-            <p className="text-sm mb-2">
+            <h3 className="projectTitle">Project Title 3</h3>
+            <p className="projectDescription">
               Brief description of Project 3 highlighting key features and technologies used.
             </p>
-            <a href="#" className="text-indigo-500 hover:underline">View Project</a>
-            <a href="#" className="ml-3 text-indigo-500 hover:underline">View Code</a>
+            <div className="projectLinks">
+              <a href="#">View Project</a>
+              <a href="#">View Code</a>
+            </div>
           </div>
+
         </div>
       </section>
 

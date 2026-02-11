@@ -26,6 +26,7 @@ body {
   justify-content: center;
   gap: 3rem;
   min-height: 70vh;
+  flex-wrap: wrap;
 }
 
 /* IMAGE */
@@ -63,7 +64,7 @@ body {
   margin-bottom: 2rem;
 }
 
-/* BUTTONS (simple style, warna tetap) */
+/* BUTTONS */
 .btnGroup {
   display: flex;
   gap: 1rem;
@@ -111,26 +112,25 @@ section {
 /* ================= SKILLS ================= */
 .skillsSection {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
-  margin-bottom: 5%;
+  width: 100%;
+  margin: 0 auto 5%;
 }
 
-/* CARD */
 .skillBox {
+  width: 100%;
   background: #141420;
   padding: 1.6rem;
   border-radius: 10px;
   border: 1px solid transparent;
   text-align: center;
-  transition: 
+  transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
-/* HOVER EFFECT */
 .skillBox:hover {
   transform: translateY(-6px) scale(1.02);
   border-color: rgba(91, 92, 255, 0.4);
@@ -138,7 +138,6 @@ section {
     0 10px 25px rgba(91, 92, 255, 0.25),
     0 0 20px rgba(91, 92, 255, 0.15);
 }
-
 
 .skillTitle {
   margin-bottom: 1rem;
@@ -161,14 +160,14 @@ section {
 /* ================= PROJECTS ================= */
 .projectCardSection {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 2.5rem;
-  max-width: 1100px;
+  width: 100%;
   margin: 0 auto;
 }
 
-/* CARD */
 .projectCard {
+  width: 100%;
   background: #141420;
   padding: 1.6rem;
   border-radius: 10px;
@@ -176,10 +175,10 @@ section {
   text-align: center;
   transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
-/* HOVER EFFECT (MATCH SKILLS) */
 .projectCard:hover {
   transform: translateY(-6px) scale(1.02);
   border-color: rgba(91, 92, 255, 0.4);
@@ -209,8 +208,18 @@ section {
   font-size: 0.9rem;
 }
 
-
 /* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .heroSection {
+    min-height: auto;
+    gap: 2.5rem;
+  }
+
+  .heroTitle {
+    font-size: 2.1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .heroSection {
     flex-direction: column;
@@ -225,7 +234,46 @@ section {
     justify-content: center;
   }
 
+  .skillsSection,
+  .projectCardSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 3rem 1rem;
+  }
+
   .heroTitle {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+
+  .heroDescription {
+    font-size: 0.95rem;
+  }
+
+  .profileImage {
+    width: 150px;
+    height: 150px;
+  }
+
+  .skillBox,
+  .projectCard {
+    padding: 1.4rem;
+  }
+}
+
+/* ================= REDUCE MOTION ================= */
+@media (prefers-reduced-motion: reduce) {
+  .skillBox,
+  .projectCard,
+  .btnWave {
+    transition: none;
+  }
+
+  .skillBox:hover,
+  .projectCard:hover {
+    transform: none;
   }
 }

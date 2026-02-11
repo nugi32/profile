@@ -79,12 +79,19 @@ body {
   color: #5b5cff;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
+  text-decoration: none;
 }
 
 .btnWave:hover {
   background: #5b5cff;
   color: #ffffff;
 }
+
+.btnWave:hover,
+.btnWave:focus {
+  text-decoration: none;
+}
+
 
 /* ================= GLOBAL SECTION ================= */
 section {

@@ -79,6 +79,7 @@ body {
   background-color: var(--bg-color);
   color: var(--fg);
   transition: background-color 150ms linear, color 150ms linear;
+  scroll-behavior: smooth;
 }
 
 main {

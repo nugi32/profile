@@ -167,17 +167,17 @@
 /* =========================
    PLATFORM COLORS
 ========================= */
-.social-icons li.facebook {
+.social-icons li.github {
   --i: #1877f2;
   --j: #0f5bd8;
 }
 
-.social-icons li.twitter {
+.social-icons li.instagaram {
   --i: #1da1f2;
   --j: #0d8ddb;
 }
 
-.social-icons li.dribbble {
+.social-icons li.gmail {
   --i: #ea4c89;
   --j: #c9366c;
 }

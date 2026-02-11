@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
 import "./header.css";
 //import ThemeToggle from "@/components/theme/ThemeToggle"
 
@@ -12,15 +10,15 @@ export default function Header() {
     <header className="header">
       <div className="header-container">
         {/* Logo */}
-        <div className="logo">MyApp</div>
+        <div className="logo">Nugi</div>
 
         {/* Navigation */}
-        <nav className="nav">
-          <Link href="/" className="nav-link">Home</Link>
-          <Link href="/about" className="nav-link">About</Link>
-          <Link href="/blog" className="nav-link">Blog</Link>
-          <Link href="/contact" className="nav-link">Contact</Link>
-        </nav>
+          <nav className="nav">
+            <a href="#home" className="nav-link">Home</a>
+            <a href="#about" className="nav-link">About</a>
+            <a href="#contact" className="nav-link">Contact</a>
+          </nav>
+
 
       </div>
     </header>

@@ -4,7 +4,13 @@ import "./globals.css"
 import { ThemeProvider } from "next-themes"
 import NextSnowScreen from "../components/snow/NextSnowScreen"
 import Footer from "@/components/Footer/footer"
-import Header from "@/components/Header"
+import Header from "@/components/header/Header"
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700", "800", "900"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +34,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
+</head>
+
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
@@ -46,9 +59,7 @@ export default function RootLayout({
   </main>
 
 </div>
-
 <Footer />
-
         </ThemeProvider>
       </body>
     </html>

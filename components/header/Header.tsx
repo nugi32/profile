@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import "./header.css";
-import ThemeToggle from "./ThemeToggle"
+//import ThemeToggle from "@/components/theme/ThemeToggle"
 
 export default function Header() {
   
@@ -22,8 +22,6 @@ export default function Header() {
           <Link href="/contact" className="nav-link">Contact</Link>
         </nav>
 
-        {/* Theme toggle */}
-        <ThemeToggle/>
       </div>
     </header>
   );

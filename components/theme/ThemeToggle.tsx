@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import styles from "./ToggleSwitch.module.css"
+import "./ToggleSwitch.css"
 
 type ThemeToggleProps = {
   className?: string
@@ -19,16 +19,16 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   const isDark = currentTheme === "dark"
 
   return (
-    <div className={`${styles["toggle-switch"]} ${className}`}>
-      <label className={styles["switch-label"]}>
+    <div className={`toggle-switch ${className}`}>
+      <label className="switch-label">
         <input
           type="checkbox"
-          className={styles.checkbox}
+          className="checkbox"
           checked={isDark}
           onChange={() => setTheme(isDark ? "light" : "dark")}
           aria-label="Toggle theme"
         />
-        <span className={styles.slider}></span>
+        <span className="slider"></span>
       </label>
     </div>
   )

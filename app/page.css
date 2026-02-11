@@ -1,0 +1,222 @@
+
+/* =====================================================
+   🦸 HERO SECTION (IMAGE LEFT – CONTENT RIGHT)
+   ===================================================== */
+.heroSection {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 2.5rem;
+
+  max-width: 900px;
+  width: 100%;
+  padding: 3rem 1rem;
+}
+
+/* Profile Image */
+.profileImages {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Text Content */
+.aboutSection {
+  text-align: left;
+}
+
+.aboutSection h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.aboutSection h2 {
+  margin-top: 0.25rem;
+  color: var(--text);
+}
+
+.aboutSection p {
+  margin-top: 0.75rem;
+  max-width: 520px;
+  opacity: 0.95;
+}
+
+/* Button group */
+.aboutSection .btn-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* =====================================================
+   🔘 WAVE BUTTON
+   ===================================================== */
+.btn-wave {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+
+  width: var(--btn-width);
+  height: var(--btn-height);
+  line-height: calc(var(--btn-height) - 0.1em);
+
+  overflow: hidden;
+  border-radius: var(--btn-radius);
+  border: 2px solid var(--btn-color);
+
+  font-size: var(--btn-font-size);
+  font-weight: 500;
+  color: var(--btn-color);
+  background: transparent;
+  cursor: pointer;
+
+  transition: color 0.4s ease;
+  z-index: 1;
+}
+
+.btn-wave::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 200px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--btn-color);
+  top: 100%;
+  left: 100%;
+  transition: all 0.6s ease;
+}
+
+.btn-wave:hover {
+  color: var(--btn-text-hover);
+}
+
+.btn-wave:hover::before {
+  top: -30px;
+  left: -30px;
+}
+
+.btn-wave:active::before {
+  background: var(--btn-color-active);
+  transition: background 0s;
+}
+
+/* =====================================================
+   🧑 ABOUT / EXPERIENCE
+   ===================================================== */
+.aboutMeSection,
+.experienceSectio,
+.projectsSection {
+  text-align: center;
+  max-width: 900px;
+  padding: 2rem 1rem;
+}
+
+/* Wrapper untuk About & Projects side by side */
+.aboutMeSection,
+.projectsSection {
+  max-width: 420px;
+}
+
+.aboutMeSection {
+  display: inline-block;
+  width: 50%;
+  vertical-align: top;
+}
+
+.projectsSection {
+  display: inline-block;
+  width: 50%;
+  vertical-align: top;
+}
+
+
+.aboutMeSection h2,
+.experienceSectio h2,
+.projectsSection h2 {
+  color: var(--text);
+}
+
+/* =====================================================
+   📌 SKILLS
+   ===================================================== */
+.skilsSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 900px;
+  width: 100%;
+  padding: 2rem 1rem;
+}
+
+.skilsSection > div {
+  background: var(--header-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skilsSection > div:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   🧪 PROJECTS
+   ===================================================== */
+.projectCardSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.projectCard {
+  background: var(--header-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.projectCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* =====================================================
+   📱 RESPONSIVE
+   ===================================================== */
+@media (max-width: 768px) {
+  .aboutMeSection,
+  .projectsSection {
+    display: block;
+    width: 100% !important;
+    max-width: 900px;
+  }
+
+  .heroSection {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .profileImages {
+    justify-content: center;
+  }
+
+  .aboutSection {
+    text-align: center;
+  }
+
+  .aboutSection .btn-group {
+    justify-content: center;
+  }
+
+  .skilsSection,
+  .projectCardSection {
+    grid-template-columns: 1fr;
+  }
+}

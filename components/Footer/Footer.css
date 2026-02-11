@@ -1,0 +1,223 @@
+.footer {
+  position: sticky;
+
+  padding: 4rem 0 2rem;
+
+  margin-bottom: -10px;
+  margin-left: -10px;
+  margin-right: -10px;
+
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+
+  background-color: var(--footer-bg);
+  color: var(--footer-fg);
+  padding: 4rem 0 2rem;
+  position: relative;
+
+  clip-path: polygon(
+    0 15%,
+    12% 8%,
+    25% 14%,
+    37% 6%,
+    50% 12%,
+    63% 7%,
+    75% 14%,
+    88% 8%,
+    100% 15%,
+    100% 100%,
+    0 100%
+  );
+}
+
+
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  /* Gradient hanya untuk shading, bukan transparansi */
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.12) 0%,
+    rgba(255,255,255,0.06) 25%,
+    rgba(0,0,0,0.15) 60%,
+    rgba(0,0,0,0.25) 100%
+  );
+
+  clip-path: polygon(
+    0 15%,
+    12% 8%,
+    25% 14%,
+    37% 6%,
+    50% 12%,
+    63% 7%,
+    75% 14%,
+    88% 8%,
+    100% 15%,
+    100% 100%,
+    0 100%
+  );
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+.footer h2 {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2rem;
+  z-index: 1;
+  position: relative;
+  margin-top: 5%;
+}
+
+/* =========================
+   FONT & RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* =========================
+   SOCIAL ICONS CONTAINER
+========================= */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  list-style: none;
+}
+
+/* =========================
+   ICON ITEM
+========================= */
+.social-icons li {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 60px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #111827;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  transition: width 0.5s ease, box-shadow 0.5s ease;
+  overflow: hidden;
+}
+
+/* expand on hover */
+.social-icons li:hover {
+  width: 180px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================
+   GLOW BACKGROUND
+========================= */
+.social-icons li::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  background: linear-gradient(45deg, var(--i), var(--j));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+}
+
+.social-icons li:hover::before {
+  opacity: 1;
+}
+
+/* blurred glow */
+.social-icons li::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 60px;
+  background: linear-gradient(45deg, var(--i), var(--j));
+  filter: blur(20px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+}
+
+.social-icons li:hover::after {
+  opacity: 0.8;
+}
+
+/* =========================
+   ICON LINK
+========================= */
+.social-icons a {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 18px;
+  text-decoration: none;
+  color: #e5e7eb;
+  font-size: 1.5rem;
+  transition: transform 0.5s ease, font-size 0.5s ease;
+}
+
+.social-icons li:hover a {
+  transform: translateX(10px) scale(1);
+}
+
+/* =========================
+   TITLE TEXT
+========================= */
+.social-icons .title {
+  position: absolute;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.4s ease;
+  pointer-events: none; 
+  left: 70px;
+  right: auto;
+}
+
+.social-icons li:hover .title {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* =========================
+   PLATFORM COLORS
+========================= */
+.social-icons li.facebook {
+  --i: #1877f2;
+  --j: #0f5bd8;
+}
+
+.social-icons li.twitter {
+  --i: #1da1f2;
+  --j: #0d8ddb;
+}
+
+.social-icons li.dribbble {
+  --i: #ea4c89;
+  --j: #c9366c;
+}
+
+.social-icons li.linkedin {
+  --i: #0077b5;
+  --j: #005c8f;
+}

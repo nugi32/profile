@@ -1,128 +1,85 @@
-"use client";
-
-import { Mail, Phone, MapPin } from "lucide-react";
-
-interface Service {
-  name: string;
-}
-
-interface ProductServices {
-  title: string;
-  content: Service[];
-}
-
-interface Contact {
-  title: string;
-  location: string;
-  gmail: string;
-  contactNumber: string;
-}
-
-interface SocialLink {
-  platform: string;
-  link: string;
-}
-
-interface Company {
-  name: string;
-  shortDescription: string;
-}
-
-interface FooterProps {
-  company: Company;
-  productServices: ProductServices;
-  contact: Contact;
-  socialMedia: SocialLink[];
-  copyright: string;
-}
-
-export default function Footer({
-  company,
-  productServices,
-  contact,
-  socialMedia,
-  copyright
-}: FooterProps) {
+export default function Footer() {
   return (
-    <footer className="border-t border-border bg-background" id="FOOTER">
-      <div className="mx-auto max-w-6xl px-6 py-14">
+    <footer
+      id="contact"
+      className="
+        relative z-[1001] overflow-hidden
+        bg-[#030916] text-white
+        pt-16 pb-8
+        [clip-path:polygon(0_15%,12%_8%,25%_14%,37%_6%,50%_12%,63%_7%,75%_14%,88%_8%,100%_15%,100%_100%,0_100%)]
+      "
+    >
+      <h2 className="text-center text-2xl mb-12 mt-2 relative z-10">
+        Connect with me
+      </h2>
 
-        {/* Top Section */}
-        <div className="grid gap-10 md:grid-cols-4">
+      <ul className="flex justify-center items-center gap-6 list-none">
+        
+        {/* GitHub */}
+        <li
+          className="
+            relative group
+            w-[60px] h-[60px]
+            hover:w-[180px]
+            transition-all duration-500 ease-in-out
+            rounded-full
+            bg-[#111827]
+            shadow-lg hover:shadow-2xl
+            flex items-center justify-center
+            overflow-hidden
+          "
+        >
+          {/* Glow Background */}
+          <span
+            className="
+              absolute inset-0 rounded-full
+              bg-gradient-to-r from-[#1877f2] to-[#0f5bd8]
+              opacity-0 group-hover:opacity-100
+              transition-opacity duration-500
+              z-0
+            "
+          />
+          <span
+            className="
+              absolute -inset-2 rounded-full
+              bg-gradient-to-r from-[#1877f2] to-[#0f5bd8]
+              blur-xl
+              opacity-0 group-hover:opacity-80
+              transition-opacity duration-500
+              -z-10
+            "
+          />
 
-          {/* Company Info */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">
-              {company.name}
-            </h3>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              {company.shortDescription}
-            </p>
-          </div>
+          <a
+            href="https://github.com/nugi32"
+            className="
+              relative z-10
+              w-full h-full
+              flex items-center
+              pl-4
+              text-gray-200 text-xl
+              transition-transform duration-500
+              group-hover:translate-x-2
+            "
+          >
+            <i className="fa fa-github"></i>
+            <span
+              className="
+                absolute left-[70px]
+                text-sm font-semibold uppercase tracking-widest
+                opacity-0 scale-90
+                transition-all duration-400
+                group-hover:opacity-100 group-hover:scale-100
+              "
+            >
+              GitHub
+            </span>
+          </a>
+        </li>
 
-          {/* Services */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">
-              {productServices.title}
-            </h4>
-            <ul className="mt-4 space-y-3 text-sm">
-              {productServices.content.map((service, index) => (
-                <li key={index} className="text-muted-foreground">
-                  {service.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">
-              {contact.title}
-            </h4>
-            <ul className="mt-4 space-y-4 text-sm text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <MapPin size={16} className="mt-1" />
-                {contact.location}
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail size={16} />
-                {contact.gmail}
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone size={16} />
-                {contact.contactNumber}
-              </li>
-            </ul>
-          </div>
-
-          {/* Social Media */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">
-              Social Media
-            </h4>
-            <ul className="mt-4 space-y-4 text-sm text-muted-foreground">
-              {socialMedia.map((item, index) => (
-                <li key={index} className="flex items-center gap-3">
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    {item.platform}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-        </div>
-
-        {/* Bottom Section */}
-        <div className="mt-12 border-t border-border pt-6 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} {copyright}
-        </div>
-      </div>
+        {/* Repeat same structure for Gmail + LinkedIn with different gradients */}
+        
+      </ul>
     </footer>
   );
 }

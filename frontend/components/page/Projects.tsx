@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import FadeInSection from '@/components/FadeInSection'
 
 const projects = [
   {
@@ -97,12 +98,13 @@ const onTouchEnd = () => {
 
   return (
     <>
-      <section
-        id="projects"
-        className="py-20 px-6 lg:px-20 bg-white dark:bg-gray-900 transition-colors duration-300"
-      >
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
+      <FadeInSection>
+        <section
+          id="projects"
+          className="py-20 px-6 lg:px-20 bg-[var(--bg-light)] dark:bg-[var(--background)] transition-colors duration-300"
+        >
+          <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-[var(--text-dark)] dark:text-[var(--text-dark)]">
             Projects
           </h2>
 
@@ -123,7 +125,7 @@ const onTouchEnd = () => {
                   className="min-w-full flex justify-center px-6"
                 >
                   <div className="w-full max-w-2xl 
-                                  bg-white dark:bg-gray-800 
+                                  bg-[var(--card)] dark:bg-[var(--card)] 
                                   p-6 rounded-2xl shadow-2xl">
 
                     <img
@@ -132,17 +134,17 @@ const onTouchEnd = () => {
                       className="w-full h-56 object-cover rounded-xl"
                     />
 
-                    <h3 className="mt-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                    <h3 className="mt-6 text-2xl font-semibold text-[var(--text-dark)] dark:text-[var(--text-dark)]">
                       {project.title}
                     </h3>
 
-                    <p className="mt-3 text-gray-600 dark:text-gray-300">
+                    <p className="mt-3 text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)]">
                       {project.short}
                     </p>
 
                     <button
                       onClick={() => setSelected(index)}
-                      className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
+                      className="mt-6 px-6 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg font-semibold hover:bg-opacity-90 transition"
                     >
                       View Details
                     </button>
@@ -157,18 +159,18 @@ const onTouchEnd = () => {
           <div className="flex justify-center gap-6 mt-8">
             <button
               onClick={prevProject}
-              className="px-6 py-2 border border-indigo-600 text-indigo-600 
-                         dark:text-indigo-400 dark:border-indigo-400 
-                         rounded-lg hover:bg-indigo-600 hover:text-white transition"
+              className="px-6 py-2 border border-[var(--primary)] text-[var(--primary)] 
+                         dark:text-[var(--primary)] dark:border-[var(--primary)] 
+                         rounded-lg hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition"
             >
               ← Prev
             </button>
 
             <button
               onClick={nextProject}
-              className="px-6 py-2 border border-indigo-600 text-indigo-600 
-                         dark:text-indigo-400 dark:border-indigo-400 
-                         rounded-lg hover:bg-indigo-600 hover:text-white transition"
+              className="px-6 py-2 border border-[var(--primary)] text-[var(--primary)] 
+                         dark:text-[var(--primary)] dark:border-[var(--primary)] 
+                         rounded-lg hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition"
             >
               Next →
             </button>
@@ -182,16 +184,15 @@ const onTouchEnd = () => {
                 onClick={() => setCurrent(index)}
                 className={`w-3 h-3 rounded-full cursor-pointer transition ${
                   current === index
-                    ? 'bg-indigo-600 scale-125'
-                    : 'bg-gray-300 dark:bg-gray-700'
+                    ? 'bg-[var(--primary)] scale-125'
+                    : 'bg-[var(--bg-subtle)] dark:bg-[var(--bg-subtle)]'
                 }`}
               />
             ))}
           </div>
         </div>
       </section>
-
-      {/* Overlay Modal */}
+      </FadeInSection>
         {selected !== null && (
         <div
             onClick={() => setSelected(null)}
@@ -200,12 +201,12 @@ const onTouchEnd = () => {
         >
             <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-gray-900 max-w-xl w-full p-8 rounded-2xl shadow-2xl relative"
+            className="bg-[var(--card)] dark:bg-[var(--card)] max-w-xl w-full p-8 rounded-2xl shadow-2xl relative"
             >
 
             <button
                 onClick={() => setSelected(null)}
-                className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-xl"
+                className="absolute top-4 right-4 text-[var(--text-dark-secondary)] hover:text-red-500 text-xl"
             >
                 ✕
             </button>
@@ -216,11 +217,11 @@ const onTouchEnd = () => {
                 className="w-full h-64 object-cover rounded-xl"
             />
 
-            <h3 className="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
+            <h3 className="mt-6 text-2xl font-bold text-[var(--text-dark)] dark:text-[var(--text-dark)]">
                 {projects[selected].title}
             </h3>
 
-            <p className="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p className="mt-4 text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)] leading-relaxed">
                 {projects[selected].details}
             </p>
 

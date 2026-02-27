@@ -6,7 +6,7 @@ export default async function ServicesPage() {
   const ProductServicesData = await getProductServicesData();
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div style={{ backgroundColor: 'var(--background)' }}>
       {ProductServicesData ? (
         <ProductsServicesSection 
           contentShort={ProductServicesData.contentShort}

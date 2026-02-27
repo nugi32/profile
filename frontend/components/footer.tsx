@@ -9,7 +9,7 @@ export default function Footer() {
       id="contact"
       className="
         relative z-[1001] overflow-hidden
-        bg-[#030916] text-white
+        bg-[var(--footer-bg)] text-[var(--text-dark)]
         pt-12 pb-8
         [clip-path:polygon(0_15%,12%_8%,25%_14%,37%_6%,50%_12%,63%_7%,75%_14%,88%_8%,100%_15%,100%_100%,0_100%)]
       "
@@ -68,7 +68,7 @@ function SocialItem({
         hover:w-[180px]
         transition-all duration-500 ease-in-out
         rounded-full
-        bg-[#111827]
+        bg-[var(--bg-light-secondary)]
         shadow-lg hover:shadow-2xl
         flex items-center justify-center
         overflow-hidden
@@ -104,7 +104,7 @@ function SocialItem({
           w-full h-full
           flex items-center
           pl-5
-          text-gray-200
+          text-[var(--text-dark-secondary)]
           transition-transform duration-500
           group-hover:translate-x-2
         "

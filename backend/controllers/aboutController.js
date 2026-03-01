@@ -3,9 +3,11 @@ const About = require("../models/about");
 exports.createAbout = async (req, res) => {
   try {
     const newAbout = new About({
-      bio: req.body.bio,
-      avatar: req.file ? req.file.path : req.body.avatar || null,
-      skills: req.body.skills ? (Array.isArray(req.body.skills) ? req.body.skills : req.body.skills.split(",").map(s => s.trim())) : []
+      subTitle: req.body.subTitle,
+      whoIam: req.body.whoIam,
+      experience: req.body.experience,
+      projects: req.body.projects,
+      skills: req.body.skills ? (Array.isArray(req.body.skills) ? req.body.skills : []) : []
     });
 
     const saved = await newAbout.save();

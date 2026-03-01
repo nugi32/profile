@@ -1,47 +1,47 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-// Landing Page Data
-export interface LandingPageData {
-  title: string
-  subtitle: string
-  smallTitle: string
-  heroImage: string
+// ================= LANDING PAGE =================
+export interface LandingData {
+  _id?: string
+  greeting: string
+  role: string
+  description: string
+  profilePicture: string
 }
 
-export async function getLandingPage(): Promise<LandingPageData> {
+export async function getLandingPage(): Promise<LandingData> {
   try {
     const response = await fetch(`${API_URL}/api/landing`)
     if (!response.ok) throw new Error("Failed to fetch landing page")
     const data = await response.json()
-    // Return first entry if array, otherwise return as is
-    return Array.isArray(data) && data.length > 0 ? data[0] : (data.title ? data : {
-      title: "Portfolio",
-      subtitle: "Building amazing web experiences",
-      smallTitle: "Web Developer",
-      heroImage: ""
-    })
+    return Array.isArray(data) && data.length > 0 ? data[0] : {
+      greeting: "",
+      role: "",
+      description: "",
+      profilePicture: ""
+    }
   } catch (error) {
     console.error("Error fetching landing page:", error)
     return {
-      title: "Portfolio",
-      subtitle: "Building amazing web experiences",
-      smallTitle: "Web Developer",
-      heroImage: ""
+      greeting: "",
+      role: "",
+      description: "",
+      profilePicture: ""
     }
   }
 }
 
-// Project Data
-export interface Project {
-  id: string
+// ================= PROJECTS =================
+export interface ProjectData {
+  _id?: string
   title: string
-  description: string
+  short: string
+  details: string
   image: string
   link: string
-  technologies: string
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(): Promise<ProjectData[]> {
   try {
     const response = await fetch(`${API_URL}/api/projects`)
     if (!response.ok) throw new Error("Failed to fetch projects")
@@ -52,29 +52,76 @@ export async function getProjects(): Promise<Project[]> {
   }
 }
 
-// About Data
+// ================= ABOUT =================
+export interface Skill {
+  name: string
+  level: number
+}
+
 export interface AboutData {
-  bio: string
-  avatar: string
-  skills: string[]
+  _id?: string
+  subTitle: string
+  whoIam: string
+  experience: string
+  projects: string
+  skills: Skill[]
 }
 
 export async function getAbout(): Promise<AboutData> {
   try {
     const response = await fetch(`${API_URL}/api/about`)
     if (!response.ok) throw new Error("Failed to fetch about data")
-    return await response.json()
+    const data = await response.json()
+    return Array.isArray(data) && data.length > 0 ? data[0] : {
+      subTitle: "",
+      whoIam: "",
+      experience: "",
+      projects: "",
+      skills: []
+    }
   } catch (error) {
     console.error("Error fetching about data:", error)
     return {
-      bio: "",
-      avatar: "",
+      subTitle: "",
+      whoIam: "",
+      experience: "",
+      projects: "",
       skills: []
     }
   }
 }
 
-// Contact Data
+// ================= FOOTER =================
+export interface SocialLink {
+  name: string
+  url: string
+}
+
+export interface FooterData {
+  _id?: string
+  title: string
+  socialLinks: SocialLink[]
+}
+
+export async function getFooter(): Promise<FooterData> {
+  try {
+    const response = await fetch(`${API_URL}/api/footer`)
+    if (!response.ok) throw new Error("Failed to fetch footer data")
+    const data = await response.json()
+    return Array.isArray(data) && data.length > 0 ? data[0] : {
+      title: "",
+      socialLinks: []
+    }
+  } catch (error) {
+    console.error("Error fetching footer data:", error)
+    return {
+      title: "",
+      socialLinks: []
+    }
+  }
+}
+
+// ================= CONTACT =================
 export interface ContactData {
   email: string
   github: string
@@ -86,7 +133,13 @@ export async function getContact(): Promise<ContactData> {
   try {
     const response = await fetch(`${API_URL}/api/contact`)
     if (!response.ok) throw new Error("Failed to fetch contact data")
-    return await response.json()
+    const data = await response.json()
+    return Array.isArray(data) && data.length > 0 ? data[0] : {
+      email: "",
+      github: "",
+      linkedin: "",
+      twitter: ""
+    }
   } catch (error) {
     console.error("Error fetching contact data:", error)
     return {
@@ -98,26 +151,80 @@ export async function getContact(): Promise<ContactData> {
   }
 }
 
-// Combined Portfolio Data
-export interface PortfolioData {
-  landingPage: LandingPageData
-  projects: Project[]
-  about: AboutData
-  contact: ContactData
+// ================= PORTFOLIO (Save All) =================
+export interface PortfolioPayload {
+  Landingdata: {
+    section: string
+    data: LandingData & { profilePictureFile?: File; preview?: string }
+  }
+  ProjectsData: {
+    section: string
+    data: Array<ProjectData & { imageFile?: File; preview?: string }>
+  }
+  AboutMeData: AboutData
+  FooterData: FooterData
 }
 
-export async function getPortfolioData(): Promise<PortfolioData> {
-  const [landingPage, projects, about, contact] = await Promise.all([
-    getLandingPage(),
-    getProjects(),
-    getAbout(),
-    getContact()
-  ])
+export async function savePortfolio(portfolioData: PortfolioPayload): Promise<{ message: string }> {
+  try {
+    const form = new FormData()
 
-  return {
-    landingPage,
-    projects,
-    about,
-    contact
+    // Append JSON (without files)
+    const cleanData = JSON.parse(JSON.stringify(portfolioData))
+
+    form.append("data", JSON.stringify(cleanData))
+
+    // landing image
+    if (portfolioData.Landingdata.data.profilePictureFile) {
+      form.append("landingImage", portfolioData.Landingdata.data.profilePictureFile)
+    }
+
+    // project images
+    portfolioData.ProjectsData.data.forEach((project: any, index: number) => {
+      if (project.imageFile) {
+        form.append(`projectImage_${index}`, project.imageFile)
+      }
+    })
+
+    const response = await fetch(`${API_URL}/api/portfolio`, {
+      method: "POST",
+      body: form
+    })
+
+    if (!response.ok) throw new Error("Failed to save portfolio")
+    return await response.json()
+  } catch (error) {
+    console.error("Error saving portfolio:", error)
+    throw error
+  }
+}
+
+// ================= GET COMPLETE PORTFOLIO =================
+export interface CompletePortfolio {
+  Landingdata: {
+    section: string
+    data: LandingData
+  }
+  ProjectsData: {
+    section: string
+    data: ProjectData[]
+  }
+  AboutMeData: AboutData
+  FooterData: FooterData
+}
+
+export async function getPortfolio(): Promise<CompletePortfolio> {
+  try {
+    const response = await fetch(`${API_URL}/api/portfolio`)
+    if (!response.ok) throw new Error("Failed to fetch portfolio")
+    return await response.json()
+  } catch (error) {
+    console.error("Error fetching portfolio:", error)
+    return {
+      Landingdata: { section: "LandingPage", data: { greeting: "", role: "", description: "", profilePicture: "" } },
+      ProjectsData: { section: "ProjectsPage", data: [] },
+      AboutMeData: { subTitle: "", whoIam: "", experience: "", projects: "", skills: [] },
+      FooterData: { title: "", socialLinks: [] }
+    }
   }
 }

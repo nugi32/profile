@@ -2,9 +2,14 @@ const mongoose = require("mongoose");
 
 const aboutSchema = new mongoose.Schema(
   {
-    bio: { type: String },
-    avatar: { type: String },
-    skills: [{ type: String }]
+    subTitle: { type: String },
+    whoIam: { type: String },
+    experience: { type: String },
+    projects: { type: String },
+    skills: [{
+      name: { type: String },
+      level: { type: Number, default: 0 }
+    }]
   },
   { timestamps: true }
 );

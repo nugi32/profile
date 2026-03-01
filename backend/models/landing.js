@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 
 const landingSchema = new mongoose.Schema(
   {
-    title: { type: String },
-    subtitle: { type: String },
-    heroImage: { type: String }
+    greeting: { type: String },
+    role: { type: String },
+    description: { type: String },
+    profilePicture: { type: String }
   },
   { timestamps: true }
 );

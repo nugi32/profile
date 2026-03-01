@@ -26,16 +26,16 @@ exports.getProject = async (req, res) => {
 // CREATE
 exports.createProject = async (req, res) => {
   try {
-    if (!req.body.title || !req.body.description) {
-      return res.status(400).json({ message: "Title and description are required" });
+    if (!req.body.title) {
+      return res.status(400).json({ message: "Title is required" });
     }
 
     const newProject = new Project({
       title: req.body.title,
-      description: req.body.description,
+      short: req.body.short || "",
+      details: req.body.details || "",
       link: req.body.link || "",
-      image: req.file ? req.file.path : null,
-      technologies: req.body.technologies || ""
+      image: req.file ? req.file.path : null
     });
 
     const saved = await newProject.save();
@@ -51,9 +51,9 @@ exports.updateProject = async (req, res) => {
   try {
     const updateData = {
       title: req.body.title,
-      description: req.body.description,
-      link: req.body.link || "",
-      technologies: req.body.technologies || ""
+      short: req.body.short || "",
+      details: req.body.details || "",
+      link: req.body.link || ""
     };
 
     if (req.file) {

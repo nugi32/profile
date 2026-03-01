@@ -5,20 +5,18 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: true
+  short: {
+    type: String
+  },
+  details: {
+    type: String
   },
   link: {
     type: String
   },
   image: {
-    type: String, // hanya simpan path
-    default: null
-  },
-  technologies: {
     type: String,
-    default: ""
+    default: null
   }
 }, { timestamps: true });
 

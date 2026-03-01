@@ -1,11 +1,23 @@
 'use client'
 
 import FadeInSection from '@/components/FadeInSection';
-import siteData from '../../lib/dummyData';
+import { useEffect, useState } from 'react';
+import { getAbout, AboutData, Skill } from '../../lib/api';
 
 export function AboutUs() {
-  const { AboutMeData } = siteData;
-  const skills = AboutMeData.skills;
+  const [aboutData, setAboutData] = useState<AboutData>({
+    subTitle: '',
+    whoIam: '',
+    experience: '',
+    projects: '',
+    skills: []
+  });
+
+  useEffect(() => {
+    getAbout().then(setAboutData);
+  }, []);
+
+  const skills = aboutData.skills;
 
   return (
     <FadeInSection>
@@ -21,7 +33,7 @@ export function AboutUs() {
             About Me
           </h2>
           <p className="mt-4 text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)] max-w-2xl mx-auto">
-            {AboutMeData.subTitle}
+            {aboutData.subTitle}
           </p>
         </div>
 
@@ -35,21 +47,21 @@ export function AboutUs() {
             </h3>
 
             <p className="mt-6 text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)] leading-relaxed">
-              {AboutMeData.whoIam}
+              {aboutData.whoIam}
             </p>
 
             <div className="mt-8 grid grid-cols-2 gap-6">
               <div>
-                <h4 className="text-2xl font-bold text-[var(--primary)]">{AboutMeData.experience.split(' ')[0]}</h4>
+                <h4 className="text-2xl font-bold text-[var(--primary)]">{aboutData.experience.split(' ')[0]}</h4>
                 <p className="text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)] text-sm">
-                  {AboutMeData.experience.split(' ').slice(1).join(' ')}
+                  {aboutData.experience.split(' ').slice(1).join(' ')}
                 </p>
               </div>
 
               <div>
-                <h4 className="text-2xl font-bold text-[var(--primary)]">{AboutMeData.projects.split(' ')[0]}</h4>
+                <h4 className="text-2xl font-bold text-[var(--primary)]">{aboutData.projects.split(' ')[0]}</h4>
                 <p className="text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)] text-sm">
-                  {AboutMeData.projects.split(' ').slice(1).join(' ')}
+                  {aboutData.projects.split(' ').slice(1).join(' ')}
                 </p>
               </div>
             </div>

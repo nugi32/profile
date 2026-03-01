@@ -1,10 +1,19 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { FaGithub, FaLinkedinIn } from "react-icons/fa"
 import { MdEmail } from "react-icons/md"
-import exportedData from "@/lib/dummyData"
+import { getFooter, FooterData, SocialLink } from "@/lib/api"
 
 export default function Footer() {
+  const [footerData, setFooterData] = useState<FooterData>({
+    title: '',
+    socialLinks: []
+  });
+
+  useEffect(() => {
+    getFooter().then(setFooterData);
+  }, []);
   return (
     <footer
       id="contact"
@@ -20,31 +29,29 @@ export default function Footer() {
       </h2>
 
       <ul className="flex justify-center items-center gap-8 list-none">
-
-        {/* GitHub */}
-        <SocialItem
-          href={exportedData.FooterData.socialLinks[0].url}
-          icon={<FaGithub size={22} />}
-          label={exportedData.FooterData.socialLinks[0].name}
-          gradient="from-gray-700 to-gray-900"
-        />
-
-        {/* Gmail */}
-        <SocialItem
-          href={exportedData.FooterData.socialLinks[2].url}
-          icon={<MdEmail size={22} />}
-          label={exportedData.FooterData.socialLinks[2].name}
-          gradient="from-red-500 to-pink-500"
-        />
-
-        {/* LinkedIn */}
-        <SocialItem
-          href={exportedData.FooterData.socialLinks[1].url}
-          icon={<FaLinkedinIn size={22} />}
-          label={exportedData.FooterData.socialLinks[1].name}
-          gradient="from-blue-500 to-blue-700"
-        />
-
+        {footerData.socialLinks.map((social, index) => (
+          <SocialItem
+            key={index}
+            href={social.url}
+            icon={
+              social.name.toLowerCase() === 'github' ? (
+                <FaGithub size={22} />
+              ) : social.name.toLowerCase() === 'linkedin' ? (
+                <FaLinkedinIn size={22} />
+              ) : (
+                <MdEmail size={22} />
+              )
+            }
+            label={social.name}
+            gradient={
+              social.name.toLowerCase() === 'github'
+                ? 'from-gray-700 to-gray-900'
+                : social.name.toLowerCase() === 'linkedin'
+                ? 'from-blue-500 to-blue-700'
+                : 'from-red-500 to-pink-500'
+            }
+          />
+        ))}
       </ul>
     </footer>
   )

@@ -4,9 +4,10 @@ const Landing = require("../models/landing");
 exports.createLanding = async (req, res) => {
   try {
     const newLanding = new Landing({
-      title: req.body.title,
-      subtitle: req.body.subtitle,
-      heroImage: req.file ? req.file.path : req.body.heroImage || null
+      greeting: req.body.greeting,
+      role: req.body.role,
+      description: req.body.description,
+      profilePicture: req.file ? req.file.path : req.body.profilePicture || null
     });
 
     const saved = await newLanding.save();

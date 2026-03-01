@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import FadeInSection from '@/components/FadeInSection'
-import siteData from '../../lib/dummyData'
-const projects = siteData.ProjectsData.data
+import { getProjects, ProjectData } from '../../lib/api'
+import { getImageUrl } from '../../lib/imageUtils'
 
 export function Projects() {
+  const [projects, setProjects] = useState<ProjectData[]>([])
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
 
@@ -14,6 +15,11 @@ export function Projects() {
   const dragEnd = useRef<number | null>(null)
   const isDragging = useRef(false)
   const minDrag = 80
+
+  // Fetch projects from MongoDB
+  useEffect(() => {
+    getProjects().then(setProjects);
+  }, []);
 
   const next = () =>
     setCurrent((prev) => (prev === projects.length - 1 ? 0 : prev + 1))
@@ -134,7 +140,7 @@ export function Projects() {
                                     hover:shadow-2xl transition">
 
                       <img
-                        src={project.image}
+                        src={getImageUrl(project.image)}
                         alt={project.title}
                         className="w-full h-56 object-cover rounded-xl"
                       />
@@ -213,7 +219,7 @@ export function Projects() {
 </button>
 
             <img
-              src={projects[selected].image}
+              src={getImageUrl(projects[selected].image)}
               alt={projects[selected].title}
               className="w-full h-64 object-cover rounded-xl"
             />

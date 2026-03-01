@@ -26,9 +26,11 @@ app.get("/api/health", (req, res) => {
 });
 
 // Routes
+app.use("/api/portfolio", require("./routes/portfolioRoutes"));
 app.use("/api/projects", require("./routes/projectRoutes"));
 app.use("/api/landing", require("./routes/landingRoutes"));
 app.use("/api/about", require("./routes/aboutRoutes"));
+app.use("/api/footer", require("./routes/footerRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 
 // Database connection with error handling
@@ -41,11 +43,13 @@ const connectDB = async (attempt = 1) => {
     const isLocalMongo = process.env.MONGO_URI.includes("127.0.0.1") || process.env.MONGO_URI.includes("localhost");
     
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 30000,  // Increased from 5000 for Atlas stability
       socketTimeoutMS: 45000,
-      connectTimeoutMS: 10000,
+      connectTimeoutMS: 30000,  // Increased from 10000
       maxPoolSize: 10,
-      minPoolSize: 5
+      minPoolSize: 5,
+      retryWrites: true,
+      w: 'majority'
     });
     
     console.log("✓ MongoDB Connected");

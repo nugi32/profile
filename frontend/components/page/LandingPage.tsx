@@ -4,12 +4,29 @@ import Image from 'next/image'
 import ProfileImage from '@/public/Image.jpeg'
 import { ModeToggle } from '@/components/modeTogggle'
 import FadeInSection from "@/components/FadeInSection";
-import siteData from '../../lib/dummyData';
+import { useEffect, useState } from 'react';
+import { getLandingPage, LandingData } from '../../lib/api';
+import { getImageUrl } from '../../lib/imageUtils';
 
-const { Landingdata } = siteData;
-const navigation = Landingdata.data.navigation;
+const defaultNavigation = [
+  { name: 'Projects', href: '#projects' },
+  { name: 'About Me', href: '#about' },
+  { name: 'Contact', href: '#contact' },
+];
 
 export default function LandingPage() {
+  const [landingData, setLandingData] = useState<LandingData>({
+    greeting: '',
+    role: '',
+    description: '',
+    profilePicture: ''
+  });
+
+  useEffect(() => {
+    getLandingPage().then(setLandingData);
+  }, []);
+
+  const navigation = defaultNavigation;
   return (
     <div id="home" className="bg-[var(--bg-light)] dark:bg-[var(--background)] transition-colors duration-300">
       
@@ -56,28 +73,38 @@ export default function LandingPage() {
         >
           {/* Profile Image */}
           <div className="flex-shrink-0">
-              <Image
-              src={ProfileImage}
-              alt="Profile Image"
-              priority
-              className="rounded-full shadow-lg 
-                          w-64 h-64 object-cover 
-                          border-4 border-[var(--primary)]"
+            {landingData.profilePicture ? (
+              <img
+                src={getImageUrl(landingData.profilePicture)}
+                alt="Profile Image"
+                className="rounded-full shadow-lg 
+                            w-64 h-64 object-cover 
+                            border-4 border-[var(--primary)]"
               />
+            ) : (
+              <Image
+                src={ProfileImage}
+                alt="Profile Image"
+                priority
+                className="rounded-full shadow-lg 
+                            w-64 h-64 object-cover 
+                            border-4 border-[var(--primary)]"
+              />
+            )}
           </div>
 
           {/* Text Content */}
           <div className="max-w-xl text-center md:text-left">
             <h3 className="text-2xl font-semibold text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)]">
-              {Landingdata.data.greeting}
+              {landingData.greeting}
             </h3>
 
             <h2 className="mt-2 text-4xl font-bold text-[var(--text-dark)] dark:text-[var(--text-dark)] leading-tight">
-              {Landingdata.data.role}
+              {landingData.role}
             </h2>
 
             <p className="mt-6 text-[var(--text-dark-secondary)] dark:text-[var(--text-dark-secondary)] leading-relaxed">
-              {Landingdata.data.description}
+              {landingData.description}
             </p>
 
             <div className="mt-8 flex gap-4 justify-center md:justify-start">

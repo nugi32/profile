@@ -8,8 +8,18 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { SaveIcon, PlusIcon, TrashIcon } from "lucide-react"
 import { CheckCircle2Icon, AlertCircleIcon } from "lucide-react"
 import { savePortfolio } from "@/lib/api"
+import { useRef } from "react";
 
 export default function AdminPage() {
+
+const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+const handleButtonClick = () => {
+  if (fileInputRef.current) {
+    fileInputRef.current.click();
+  }
+};
+
 
   const [portfolioData, setPortfolioData] = useState<any>({
     Landingdata: {
@@ -305,9 +315,17 @@ export default function AdminPage() {
           }
         />
 
+        {/* upload BTN */}
+        <Button onClick={handleButtonClick} className="mt-4">
+          Select Picture
+        </Button>
+
+        {/* input file hidden */}
         <input
           type="file"
-          className="mt-4"
+          accept=".png,.jpg,.jpeg"
+          ref={fileInputRef}
+          className="hidden"
           onChange={(e) =>
             handleLandingImage(e.target.files?.[0] || null)
           }
@@ -368,9 +386,17 @@ export default function AdminPage() {
               }
             />
 
+            {/* upload BTN */}
+            <Button onClick={handleButtonClick} className="mt-4">
+              Select Picture
+            </Button>
+
+            {/* input file hidden */}
             <input
               type="file"
-              className="mt-3"
+              accept=".png,.jpg,.jpeg"
+              ref={fileInputRef}
+              className="hidden"
               onChange={(e) =>
                 handleProjectImage(index, e.target.files?.[0] || null)
               }

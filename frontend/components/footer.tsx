@@ -25,7 +25,7 @@ export default function Footer() {
       "
     >
       <h2 className="text-center text-2xl mb-10 mt-2 relative z-10">
-        Connect with me
+        {footerData.title}
       </h2>
 
       <ul className="flex justify-center items-center gap-8 list-none">

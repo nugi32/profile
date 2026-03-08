@@ -17,19 +17,31 @@ exports.savePortfolio = async (req, res) => {
 
     // 1. Save Landing Data
     if (portfolioData.Landingdata) {
+      // log payload to see what arrived (helps debug missing values)
+      console.log("[portfolioController] landing payload:", portfolioData.Landingdata);
+
       const landingData = {
         greeting: portfolioData.Landingdata.data.greeting,
         role: portfolioData.Landingdata.data.role,
         description: portfolioData.Landingdata.data.description
       };
 
-      // Handle profile picture upload
+      // Handle profile picture upload (file comes separately via multer)
       if (req.files && req.files.landingImage) {
         landingData.profilePicture = req.files.landingImage[0].path;
       }
 
-      // Upsert (update if exists, create if not)
-      await Landing.findOneAndUpdate({}, landingData, { upsert: true });
+      // Upsert (update if exists, create if not).
+      // Important: if there are multiple landing documents in the collection,
+      // findOneAndUpdate with an empty filter `{}` will pick an *arbitrary* document.
+      // The GET endpoint sorts by createdAt desc and returns the newest record, so
+      // we must use the same sort when updating to ensure we modify the same
+      // document that the admin page will read back.  Without the sort the
+      // user could be editing an old record while the newest one remains unchanged.
+      await Landing.findOneAndUpdate({}, landingData, {
+        upsert: true,
+        sort: { createdAt: -1 }
+      });
     }
 
     // 2. Save Projects Data
@@ -66,7 +78,11 @@ exports.savePortfolio = async (req, res) => {
         skills: portfolioData.AboutMeData.skills || []
       };
 
-      await About.findOneAndUpdate({}, aboutData, { upsert: true });
+      // keep same semantics as landing; pick the most recently created document
+      await About.findOneAndUpdate({}, aboutData, {
+        upsert: true,
+        sort: { createdAt: -1 }
+      });
     }
 
     // 4. Save Footer Data
@@ -76,7 +92,11 @@ exports.savePortfolio = async (req, res) => {
         socialLinks: portfolioData.FooterData.socialLinks || []
       };
 
-      await Footer.findOneAndUpdate({}, footerData, { upsert: true });
+      // pick newest footer entry when multiple exist
+      await Footer.findOneAndUpdate({}, footerData, {
+        upsert: true,
+        sort: { createdAt: -1 }
+      });
     }
 
     res.json({ message: "Portfolio saved successfully" });

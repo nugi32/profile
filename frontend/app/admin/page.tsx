@@ -5,21 +5,56 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { SaveIcon, PlusIcon, TrashIcon } from "lucide-react"
+import { SaveIcon, PlusIcon, TrashIcon, XIcon, RefreshCwIcon } from "lucide-react"
 import { CheckCircle2Icon, AlertCircleIcon } from "lucide-react"
-import { savePortfolio } from "@/lib/api"
+import {
+  // Types
+  LandingData,
+  ProjectData,
+  Skill,
+  AboutData,
+  SocialLink,
+  FooterData,
+  ContactData,
+  PortfolioPayload,
+  CompletePortfolio,
+  
+  // Functions
+  getLandingPage,
+  getProjects,
+  getAbout,
+  getFooter,
+  getContact,
+  savePortfolio,
+  getPortfolio
+} from '@/lib/api'
+
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AdminPage() {
+  const router = useRouter();
+  
+  // Ref terpisah untuk masing-masing section
+  const landingFileInputRef = useRef<HTMLInputElement | null>(null);
+  const projectFileInputRef = useRef<HTMLInputElement | null>(null);
 
-const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // State untuk menyimpan index project yang aktif
+  const [activeProjectIndex, setActiveProjectIndex] = useState<number | null>(null);
 
-const handleButtonClick = () => {
-  if (fileInputRef.current) {
-    fileInputRef.current.click();
-  }
-};
+  const handleLandingButtonClick = () => {
+    if (landingFileInputRef.current) {
+      landingFileInputRef.current.click();
+    }
+  };
 
+  const handleProjectButtonClick = (index: number) => {
+    if (projectFileInputRef.current) {
+      setActiveProjectIndex(index);
+      projectFileInputRef.current.click();
+    }
+  };
 
   const [portfolioData, setPortfolioData] = useState<any>({
     Landingdata: {
@@ -53,11 +88,185 @@ const handleButtonClick = () => {
     }
   })
 
+  // State untuk melacak field mana yang sudah diubah (dirty)
+  const [dirtyFields, setDirtyFields] = useState<{
+    landing: { [key: string]: boolean };
+    projects: { [key: number]: { [key: string]: boolean } };
+    about: { [key: string]: boolean };
+    aboutSkills: { [key: number]: { [key: string]: boolean } };
+    footer: { [key: string]: boolean };
+    footerSocials: { [key: number]: { [key: string]: boolean } };
+  }>({
+    landing: {},
+    projects: {},
+    about: {},
+    aboutSkills: {},
+    footer: {},
+    footerSocials: {}
+  });
+
   const [alert, setAlert] = useState<any>(null)
+  const [updatingSection, setUpdatingSection] = useState<string | null>(null)
+
+  /* ================= LOAD ALL DATA ================= */
+  useEffect(() => {
+    const loadAllData = async () => {
+      try {
+        // Load Landing Data
+        const landingData = await getLandingPage();
+        const landingImageUrl = landingData?.profilePicture
+          ? `${process.env.NEXT_PUBLIC_API_URL}/${landingData.profilePicture}`
+          : "";
+
+        // Load Projects Data
+        const projectsData = await getProjects();
+        
+        // Process projects images
+        const processedProjects = projectsData?.map((project: any) => ({
+          ...project,
+          preview: project.image ? `${process.env.NEXT_PUBLIC_API_URL}/${project.image}` : "",
+          imageFile: null
+        })) || [];
+
+        // Load About Data
+        const aboutData = await getAbout();
+
+        // Load Footer Data
+        const footerData = await getFooter();
+
+        setPortfolioData((prev: any) => ({
+          ...prev,
+          Landingdata: {
+            ...prev.Landingdata,
+            data: {
+              ...prev.Landingdata.data,
+              greeting: landingData?.greeting || "",
+              role: landingData?.role || "",
+              description: landingData?.description || "",
+              profilePicture: landingData?.profilePicture || "",
+              preview: landingImageUrl
+            }
+          },
+          ProjectsData: {
+            ...prev.ProjectsData,
+            data: processedProjects
+          },
+          AboutMeData: {
+            subTitle: aboutData?.subTitle || "",
+            whoIam: aboutData?.whoIam || "",
+            experience: aboutData?.experience || "",
+            projects: aboutData?.projects || "",
+            skills: aboutData?.skills || []
+          },
+          FooterData: {
+            title: footerData?.title || "",
+            socialLinks: footerData?.socialLinks || []
+          }
+        }));
+
+        // Reset dirty fields after loading
+        setDirtyFields({
+          landing: {},
+          projects: {},
+          about: {},
+          aboutSkills: {},
+          footer: {},
+          footerSocials: {}
+        });
+      } catch (err) {
+        console.error("Failed to load portfolio data", err);
+      }
+    };
+
+    loadAllData();
+  }, []);
+
+  /* ================= DIRTY FIELD HANDLERS ================= */
+  const markLandingDirty = (field: string) => {
+    setDirtyFields(prev => ({
+      ...prev,
+      landing: {
+        ...prev.landing,
+        [field]: true
+      }
+    }));
+  };
+
+  const markProjectDirty = (index: number, field: string) => {
+    setDirtyFields(prev => ({
+      ...prev,
+      projects: {
+        ...prev.projects,
+        [index]: {
+          ...(prev.projects[index] || {}),
+          [field]: true
+        }
+      }
+    }));
+  };
+
+  const markAboutDirty = (field: string) => {
+    setDirtyFields(prev => ({
+      ...prev,
+      about: {
+        ...prev.about,
+        [field]: true
+      }
+    }));
+  };
+
+  const markAboutSkillDirty = (index: number, field: string) => {
+    setDirtyFields(prev => ({
+      ...prev,
+      aboutSkills: {
+        ...prev.aboutSkills,
+        [index]: {
+          ...(prev.aboutSkills[index] || {}),
+          [field]: true
+        }
+      }
+    }));
+  };
+
+  const markFooterDirty = (field: string) => {
+    setDirtyFields(prev => ({
+      ...prev,
+      footer: {
+        ...prev.footer,
+        [field]: true
+      }
+    }));
+  };
+
+  const markFooterSocialDirty = (index: number, field: string) => {
+    setDirtyFields(prev => ({
+      ...prev,
+      footerSocials: {
+        ...prev.footerSocials,
+        [index]: {
+          ...(prev.footerSocials[index] || {}),
+          [field]: true
+        }
+      }
+    }));
+  };
+
+  const clearSectionDirty = (section: string) => {
+    if (section === 'landing') {
+      setDirtyFields(prev => ({ ...prev, landing: {} }));
+    } else if (section === 'projects') {
+      setDirtyFields(prev => ({ ...prev, projects: {} }));
+    } else if (section === 'about') {
+      setDirtyFields(prev => ({ ...prev, about: {}, aboutSkills: {} }));
+    } else if (section === 'footer') {
+      setDirtyFields(prev => ({ ...prev, footer: {}, footerSocials: {} }));
+    }
+  };
 
   /* ================= LANDING ================= */
 
   const handleLandingChange = (field: string, value: string) => {
+    markLandingDirty(field);
     setPortfolioData({
       ...portfolioData,
       Landingdata: {
@@ -71,6 +280,7 @@ const handleButtonClick = () => {
   }
 
   const handleLandingImage = (file: File | null) => {
+    markLandingDirty('profilePicture');
     const preview = file ? URL.createObjectURL(file) : ""
     setPortfolioData({
       ...portfolioData,
@@ -84,7 +294,6 @@ const handleButtonClick = () => {
       }
     })
   }
-
   /* ================= PROJECTS ================= */
 
   const addProject = () => {
@@ -109,6 +318,7 @@ const handleButtonClick = () => {
   }
 
   const handleProjectChange = (index: number, field: string, value: string) => {
+    markProjectDirty(index, field);
     const updated = [...portfolioData.ProjectsData.data]
     updated[index][field] = value
 
@@ -122,6 +332,7 @@ const handleButtonClick = () => {
   }
 
   const handleProjectImage = (index: number, file: File | null) => {
+    markProjectDirty(index, 'image');
     const updated = [...portfolioData.ProjectsData.data]
     updated[index].imageFile = file
     updated[index].preview = file ? URL.createObjectURL(file) : ""
@@ -152,6 +363,7 @@ const handleButtonClick = () => {
   /* ================= ABOUT ================= */
 
   const handleAboutChange = (field: string, value: string) => {
+    markAboutDirty(field);
     setPortfolioData({
       ...portfolioData,
       AboutMeData: {
@@ -175,6 +387,7 @@ const handleButtonClick = () => {
   }
 
   const handleSkillChange = (index: number, field: string, value: any) => {
+    markAboutSkillDirty(index, field);
     const updated = [...portfolioData.AboutMeData.skills]
     updated[index][field] = value
 
@@ -217,6 +430,7 @@ const handleButtonClick = () => {
   }
 
   const handleSocialChange = (index: number, field: string, value: string) => {
+    markFooterSocialDirty(index, field);
     const updated = [...portfolioData.FooterData.socialLinks]
     updated[index][field] = value
 
@@ -242,305 +456,528 @@ const handleButtonClick = () => {
       }
     })
   }
+  /* ================= SAVE ALL ================= */
 
-  /* ================= SAVE ================= */
-
-  const saveData = async () => {
+  const saveAllData = async () => {
+    setUpdatingSection('all')
     try {
+      // debug payload before sending
+      console.log("SAVE PAYLOAD (frontend):", JSON.stringify(portfolioData, null, 2))
+
       await savePortfolio(portfolioData)
-      setAlert({ type: "success" })
-      setTimeout(() => setAlert(null), 3000)
+      clearSectionDirty('landing');
+      clearSectionDirty('projects');
+      clearSectionDirty('about');
+      clearSectionDirty('footer');
+      setAlert({ type: "success", message: "All portfolio data saved successfully!" })
     } catch (err) {
-      setAlert({ type: "error" })
-      setTimeout(() => setAlert(null), 3000)
+      console.error("Failed to save portfolio data", err)
+      setAlert({ type: "error", message: "Failed to save all portfolio data." })
+    } finally {
+      setUpdatingSection(null)
     }
   }
 
-  /* ================= UI ================= */
+  const closeAlert = () => {
+    setAlert(null)
+    // Auto refresh page after alert is closed
+    router.refresh()
+  }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
-
-      {alert?.type === "success" && (
-        <Alert>
-          <CheckCircle2Icon />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>Portfolio saved.</AlertDescription>
-        </Alert>
-      )}
-
-      {alert?.type === "error" && (
-        <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Failed to save.</AlertDescription>
-        </Alert>
-      )}
-
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
-        <Button onClick={saveData}>
-          <SaveIcon className="w-4 h-4 mr-2" />
-          Save Portfolio
-        </Button>
-      </div>
-
-      {/* LANDING */}
-      <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded">
-        <h2 className="font-semibold mb-4">Landing</h2>
-
-        <Input
-          placeholder="Greeting"
-          value={portfolioData.Landingdata.data.greeting}
-          onChange={(e) =>
-            handleLandingChange("greeting", e.target.value)
-          }
-        />
-
-        <Input
-          className="mt-2"
-          placeholder="Role"
-          value={portfolioData.Landingdata.data.role}
-          onChange={(e) =>
-            handleLandingChange("role", e.target.value)
-          }
-        />
-
-        <Input
-          className="mt-2"
-          placeholder="Description"
-          value={portfolioData.Landingdata.data.description}
-          onChange={(e) =>
-            handleLandingChange("description", e.target.value)
-          }
-        />
-
-        {/* upload BTN */}
-        <Button onClick={handleButtonClick} className="mt-4">
-          Select Picture
-        </Button>
-
-        {/* input file hidden */}
-        <input
-          type="file"
-          accept=".png,.jpg,.jpeg"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={(e) =>
-            handleLandingImage(e.target.files?.[0] || null)
-          }
-        />
-
-        {portfolioData.Landingdata.data.preview && (
-          <img
-            src={portfolioData.Landingdata.data.preview}
-            className="mt-3 h-24 rounded"
+    <div className="min-h-screen p-8 bg-[var(--bg-light)] dark:bg-[var(--background)] transition-colors duration-300">
+      {/* OVERLAY ALERT */}
+      {alert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop dengan blur */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={closeAlert}
           />
-        )}
+          
+          {/* Alert Card */}
+          <div className="relative bg-[var(--card)] dark:bg-[var(--card)] rounded-lg shadow-xl max-w-md w-full mx-4 border border-[var(--border)]">
+            {alert.type === "success" ? (
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2Icon className="w-8 h-8 text-green-500" />
+                    <h3 className="text-lg font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">
+                      Success
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-[var(--muted-foreground)] dark:text-[var(--muted-foreground)] mb-6">
+                  {alert.message || "Portfolio has been successfully saved."}
+                </p>
+                <Button 
+                  onClick={closeAlert}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white"
+                >
+                  Close
+                </Button>
+              </div>
+            ) : (
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <AlertCircleIcon className="w-8 h-8 text-red-500" />
+                    <h3 className="text-lg font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">
+                      Error
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-[var(--muted-foreground)] dark:text-[var(--muted-foreground)] mb-6">
+                  {alert.message || "Failed to save portfolio. Please try again."}
+                </p>
+                <Button 
+                  onClick={closeAlert}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  Close
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] dark:text-[var(--foreground)]">Admin Dashboard</h1>
+        <Button 
+          onClick={saveAllData} 
+          disabled={updatingSection === 'all'}
+          size="lg"
+          className="px-6 py-2"
+        >
+          {updatingSection === 'all' ? (
+            <>
+              <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+              Saving All...
+            </>
+          ) : (
+            <>
+              <SaveIcon className="w-4 h-4 mr-2" />
+              Save All Portfolio
+            </>
+          )}
+        </Button>
       </div>
 
-      {/* PROJECTS */}
-      <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded">
-        <div className="flex justify-between mb-4">
-          <h2 className="font-semibold">Projects</h2>
-          <Button onClick={addProject}>
-            <PlusIcon className="w-4 h-4" />
-          </Button>
+      {/* LANDING SECTION */}
+      <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Landing Page</h2>
+<Button 
+          onClick={saveAllData} 
+          disabled={updatingSection === 'all'}
+          size="lg"
+          className="px-6 py-2"
+        >
+          {updatingSection === 'all' ? (
+            <>
+              <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+              Saving All...
+            </>
+          ) : (
+            <>
+              <SaveIcon className="w-4 h-4 mr-2" />
+              Save All Portfolio
+            </>
+          )}
+        </Button>
         </div>
 
-        {portfolioData.ProjectsData.data.map((project: any, index: number) => (
-          <div key={index} className="border p-4 rounded mb-4">
+        <div className="space-y-4">
+          <Input
+            placeholder="Greeting"
+            value={portfolioData.Landingdata.data.greeting}
+            onChange={(e) =>
+              handleLandingChange("greeting", e.target.value)
+            }
+            className={`w-full ${dirtyFields.landing.greeting ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+          />
 
-            <Input
-              placeholder="Title"
-              value={project.title}
-              onChange={(e) =>
-                handleProjectChange(index, "title", e.target.value)
-              }
-            />
+          <Input
+            className={`w-full ${dirtyFields.landing.role ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+            placeholder="Role"
+            value={portfolioData.Landingdata.data.role}
+            onChange={(e) =>
+              handleLandingChange("role", e.target.value)
+            }
+          />
 
-            <Input
-              className="mt-2"
-              placeholder="Short"
-              value={project.short}
-              onChange={(e) =>
-                handleProjectChange(index, "short", e.target.value)
-              }
-            />
+          <Input
+            className={`w-full ${dirtyFields.landing.description ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+            placeholder="Description"
+            value={portfolioData.Landingdata.data.description}
+            onChange={(e) =>
+              handleLandingChange("description", e.target.value)
+            }
+          />
 
-            <Input
-              className="mt-2"
-              placeholder="Details"
-              value={project.details}
-              onChange={(e) =>
-                handleProjectChange(index, "details", e.target.value)
-              }
-            />
-
-            <Input
-              className="mt-2"
-              placeholder="Link"
-              value={project.link}
-              onChange={(e) =>
-                handleProjectChange(index, "link", e.target.value)
-              }
-            />
-
-            {/* upload BTN */}
-            <Button onClick={handleButtonClick} className="mt-4">
+          <div className="flex flex-col gap-3">
+            <Button 
+              onClick={handleLandingButtonClick} 
+              variant="outline" 
+              className="w-fit" 
+              disabled={updatingSection === 'landing'}
+            >
               Select Picture
             </Button>
 
-            {/* input file hidden */}
             <input
               type="file"
               accept=".png,.jpg,.jpeg"
-              ref={fileInputRef}
+              ref={landingFileInputRef}
               className="hidden"
               onChange={(e) =>
-                handleProjectImage(index, e.target.files?.[0] || null)
+                handleLandingImage(e.target.files?.[0] || null)
               }
             />
 
-            {project.preview && (
-              <img src={project.preview} className="h-20 mt-2 rounded" />
+            {portfolioData.Landingdata.data.preview && (
+              <div className={`inline-block p-1 rounded ${dirtyFields.landing.profilePicture ? "border-2 border-amber-300" : ""}`}>
+                <img
+                  src={portfolioData.Landingdata.data.preview}
+                  className="h-24 w-auto rounded border border-[var(--border)]"
+                  alt="Profile preview"
+                />
+              </div>
             )}
-
-            <Button
-              variant="ghost"
-              className="mt-2"
-              onClick={() => removeProject(index)}
-            >
-              <TrashIcon className="w-4 h-4 text-red-500" />
-            </Button>
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* ABOUT */}
-      <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded">
-        <h2 className="font-semibold mb-4">About Me</h2>
+      {/* PROJECTS SECTION */}
+      <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Projects</h2>
+          <div className="flex gap-3">
+            <Button onClick={addProject} size="sm" variant="outline" disabled={updatingSection === 'projects'}>
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Project
+            </Button>
+            <Button 
+              onClick={saveAllData} 
+              size="sm"
+              disabled={updatingSection === 'projects'}
+              className="px-4"
+            >
+              {updatingSection === 'projects' ? (
+                <>
+                  <RefreshCwIcon className="w-3 h-3 mr-2 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <SaveIcon className="w-3 h-3 mr-2" />
+                  Update Projects
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
 
-        <Input
-          placeholder="Subtitle"
-          value={portfolioData.AboutMeData.subTitle}
-          onChange={(e) =>
-            handleAboutChange("subTitle", e.target.value)
-          }
-        />
+        <div className="space-y-6">
+          {portfolioData.ProjectsData.data.map((project: any, index: number) => (
+            <div key={index} className="border border-[var(--border)] p-6 rounded-lg bg-[var(--bg-light-secondary)] dark:bg-[var(--bg-subtle)]">
+              <div className="space-y-4">
+                <Input
+                  placeholder="Project Title"
+                  value={project.title}
+                  onChange={(e) =>
+                    handleProjectChange(index, "title", e.target.value)
+                  }
+                  className={`w-full ${dirtyFields.projects[index]?.title ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                />
 
-        <Input
-          className="mt-2"
-          placeholder="Who I Am"
-          value={portfolioData.AboutMeData.whoIam}
-          onChange={(e) =>
-            handleAboutChange("whoIam", e.target.value)
-          }
-        />
+                <Input
+                  className={`w-full ${dirtyFields.projects[index]?.short ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                  placeholder="Short Description"
+                  value={project.short}
+                  onChange={(e) =>
+                    handleProjectChange(index, "short", e.target.value)
+                  }
+                />
 
-        <Input
-          className="mt-2"
-          placeholder="Experience"
-          value={portfolioData.AboutMeData.experience}
-          onChange={(e) =>
-            handleAboutChange("experience", e.target.value)
-          }
-        />
+                <Input
+                  className={`w-full ${dirtyFields.projects[index]?.details ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                  placeholder="Details"
+                  value={project.details}
+                  onChange={(e) =>
+                    handleProjectChange(index, "details", e.target.value)
+                  }
+                />
 
-        <Input
-          className="mt-2"
-          placeholder="Projects Completed"
-          value={portfolioData.AboutMeData.projects}
-          onChange={(e) =>
-            handleAboutChange("projects", e.target.value)
-          }
-        />
+                <Input
+                  className={`w-full ${dirtyFields.projects[index]?.link ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                  placeholder="Project Link"
+                  value={project.link}
+                  onChange={(e) =>
+                    handleProjectChange(index, "link", e.target.value)
+                  }
+                />
 
-        <div className="flex justify-between mt-4">
-          <h3>Skills</h3>
-          <Button onClick={addSkill}>
-            <PlusIcon className="w-4 h-4" />
+                <div className="flex flex-col gap-3">
+                  <Button 
+                    onClick={() => handleProjectButtonClick(index)} 
+                    variant="outline" 
+                    className="w-fit" 
+                    disabled={updatingSection === 'projects'}
+                  >
+                    Select Picture
+                  </Button>
+
+                  <input
+                    type="file"
+                    accept=".png,.jpg,.jpeg"
+                    ref={projectFileInputRef}
+                    className="hidden"
+                    onChange={(e) => {
+                      if (activeProjectIndex !== null) {
+                        handleProjectImage(activeProjectIndex, e.target.files?.[0] || null);
+                        setActiveProjectIndex(null);
+                      }
+                    }}
+                  />
+
+                  {project.preview && (
+                    <div className={`inline-block p-1 rounded ${dirtyFields.projects[index]?.image ? "border-2 border-amber-300" : ""}`}>
+                      <img src={project.preview} className="h-20 w-auto rounded border border-[var(--border)]" alt="Project preview" />
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => removeProject(index)}
+                  disabled={updatingSection === 'projects'}
+                  className="mt-2"
+                >
+                  <TrashIcon className="w-4 h-4 mr-2" />
+                  Remove Project
+                </Button>
+              </div>
+            </div>
+          ))}
+
+          {portfolioData.ProjectsData.data.length === 0 && (
+            <p className="text-center text-[var(--muted-foreground)] py-8">
+              No projects added yet. Click "Add Project" to get started.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* ABOUT SECTION */}
+      <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">About Me</h2>
+          <Button 
+            onClick={saveAllData} 
+            size="sm"
+            disabled={updatingSection === 'about'}
+            className="px-4"
+          >
+            {updatingSection === 'about' ? (
+              <>
+                <RefreshCwIcon className="w-3 h-3 mr-2 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              <>
+                <SaveIcon className="w-3 h-3 mr-2" />
+                Update About
+              </>
+            )}
           </Button>
         </div>
 
-        {portfolioData.AboutMeData.skills.map((skill: any, index: number) => (
-          <div key={index} className="flex gap-2 mt-2">
-            <Input
-              placeholder="Skill"
-              value={skill.name}
-              onChange={(e) =>
-                handleSkillChange(index, "name", e.target.value)
-              }
-            />
-            <Input
-              type="number"
-              placeholder="Level"
-              value={skill.level}
-              onChange={(e) =>
-                handleSkillChange(index, "level", Number(e.target.value))
-              }
-            />
-            <Button
-              variant="ghost"
-              onClick={() => removeSkill(index)}
-            >
-              <TrashIcon className="w-4 h-4 text-red-500" />
+        <div className="space-y-4">
+          <Input
+            placeholder="Subtitle"
+            value={portfolioData.AboutMeData.subTitle}
+            onChange={(e) =>
+              handleAboutChange("subTitle", e.target.value)
+            }
+            className={`w-full ${dirtyFields.about.subTitle ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+          />
+
+          <Input
+            className={`w-full ${dirtyFields.about.whoIam ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+            placeholder="Who I Am"
+            value={portfolioData.AboutMeData.whoIam}
+            onChange={(e) =>
+              handleAboutChange("whoIam", e.target.value)
+            }
+          />
+
+          <Input
+            className={`w-full ${dirtyFields.about.experience ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+            placeholder="Years of Experience"
+            value={portfolioData.AboutMeData.experience}
+            onChange={(e) =>
+              handleAboutChange("experience", e.target.value)
+            }
+          />
+
+          <Input
+            className={`w-full ${dirtyFields.about.projects ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+            placeholder="Projects Completed"
+            value={portfolioData.AboutMeData.projects}
+            onChange={(e) =>
+              handleAboutChange("projects", e.target.value)
+            }
+          />
+
+          <div className="flex justify-between items-center pt-4">
+            <h3 className="text-lg font-medium text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Skills</h3>
+            <Button onClick={addSkill} size="sm" variant="outline" disabled={updatingSection === 'about'}>
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Skill
             </Button>
           </div>
-        ))}
+
+          <div className="space-y-3">
+            {portfolioData.AboutMeData.skills.map((skill: any, index: number) => (
+              <div key={index} className="flex gap-3 items-start">
+                <Input
+                  placeholder="Skill name"
+                  value={skill.name}
+                  onChange={(e) =>
+                    handleSkillChange(index, "name", e.target.value)
+                  }
+                  className={`flex-1 ${dirtyFields.aboutSkills[index]?.name ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                />
+                <Input
+                  type="number"
+                  placeholder="Level (0-100)"
+                  min={0}
+                  max={100}
+                  step={5}
+                  value={skill.level}
+                  onChange={(e) =>
+                    handleSkillChange(
+                      index,
+                      "level",
+                      e.target.value === "" ? "" : Number(e.target.value)
+                    )
+                  }
+                  className={`w-32 ${dirtyFields.aboutSkills[index]?.level ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeSkill(index)}
+                  disabled={updatingSection === 'about'}
+                  className="px-3"
+                >
+                  <TrashIcon className="w-4 h-4 text-red-500" />
+                </Button>
+              </div>
+            ))}
+
+            {portfolioData.AboutMeData.skills.length === 0 && (
+              <p className="text-center text-[var(--muted-foreground)] py-4">
+                No skills added yet. Click "Add Skill" to get started.
+              </p>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* FOOTER */}
-      <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded">
-        <h2 className="font-semibold mb-4">Footer</h2>
-
-        <Input
-          placeholder="Footer Title"
-          value={portfolioData.FooterData.title}
-          onChange={(e) =>
-            setPortfolioData({
-              ...portfolioData,
-              FooterData: {
-                ...portfolioData.FooterData,
-                title: e.target.value
-              }
-            })
-          }
-        />
-
-        <div className="flex justify-between mt-4">
-          <h3>Social Links</h3>
-          <Button onClick={addSocial}>
-            <PlusIcon className="w-4 h-4" />
+      {/* FOOTER SECTION */}
+      <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Footer</h2>
+          <Button 
+            onClick={saveAllData} 
+            size="sm"
+            disabled={updatingSection === 'footer'}
+            className="px-4"
+          >
+            {updatingSection === 'footer' ? (
+              <>
+                <RefreshCwIcon className="w-3 h-3 mr-2 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              <>
+                <SaveIcon className="w-3 h-3 mr-2" />
+                Update Footer
+              </>
+            )}
           </Button>
         </div>
 
-        {portfolioData.FooterData.socialLinks.map((social: any, index: number) => (
-          <div key={index} className="flex gap-2 mt-2">
-            <Input
-              placeholder="Name"
-              value={social.name}
-              onChange={(e) =>
-                handleSocialChange(index, "name", e.target.value)
-              }
-            />
-            <Input
-              placeholder="URL"
-              value={social.url}
-              onChange={(e) =>
-                handleSocialChange(index, "url", e.target.value)
-              }
-            />
-            <Button
-              variant="ghost"
-              onClick={() => removeSocial(index)}
-            >
-              <TrashIcon className="w-4 h-4 text-red-500" />
+        <div className="space-y-4">
+          <Input
+            placeholder="Footer Title"
+            value={portfolioData.FooterData.title}
+            onChange={(e) => {
+              markFooterDirty('title');
+              setPortfolioData({
+                ...portfolioData,
+                FooterData: {
+                  ...portfolioData.FooterData,
+                  title: e.target.value
+                }
+              })
+            }}
+            className={`w-full ${dirtyFields.footer.title ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+          />
+
+          <div className="flex justify-between items-center pt-4">
+            <h3 className="text-lg font-medium text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Social Links</h3>
+            <Button onClick={addSocial} size="sm" variant="outline" disabled={updatingSection === 'footer'}>
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Social Link
             </Button>
           </div>
-        ))}
-      </div>
 
+          <div className="space-y-3">
+            {portfolioData.FooterData.socialLinks.map((social: any, index: number) => (
+              <div key={index} className="flex gap-3 items-start">
+                <Input
+                  placeholder="Platform name (e.g., GitHub)"
+                  value={social.name}
+                  onChange={(e) =>
+                    handleSocialChange(index, "name", e.target.value)
+                  }
+                  className={`flex-1 ${dirtyFields.footerSocials[index]?.name ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                />
+                <Input
+                  placeholder="URL"
+                  value={social.url}
+                  onChange={(e) =>
+                    handleSocialChange(index, "url", e.target.value)
+                  }
+                  className={`flex-1 ${dirtyFields.footerSocials[index]?.url ? "border-amber-300 dark:border-amber-700 focus-visible:ring-amber-300" : ""}`}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeSocial(index)}
+                  disabled={updatingSection === 'footer'}
+                  className="px-3"
+                >
+                  <TrashIcon className="w-4 h-4 text-red-500" />
+                </Button>
+              </div>
+            ))}
+
+            {portfolioData.FooterData.socialLinks.length === 0 && (
+              <p className="text-center text-[var(--muted-foreground)] py-4">
+                No social links added yet. Click "Add Social Link" to get started.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

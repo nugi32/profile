@@ -1,8 +1,8 @@
 // Utility function to get full image URL
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-export function getImageUrl(imagePath: string | null | undefined): string {
-  if (!imagePath) return ""
+export function getImageUrl(imagePath: string | null | undefined): string | undefined {
+  if (!imagePath) return undefined;
   
   // If already full URL, return as is
   if (imagePath.startsWith("http")) {

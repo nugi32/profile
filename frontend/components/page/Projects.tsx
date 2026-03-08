@@ -112,23 +112,27 @@ export function Projects() {
               {projects.map((project, index) => {
                 const offset = index - current
 
-                let position =
-                  'translate-x-0 scale-100 opacity-100 z-30'
+            let position = 'translate-x-0 scale-100 opacity-100 z-30'
 
-                if (offset === -1 || offset === projects.length - 1) {
-                  position =
-                    '-translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
-                }
+            // jika cuma 1 project -> selalu center
+            if (projects.length === 1) {
+              position = 'translate-x-0 scale-100 opacity-100 z-30'
+            } else {
+              if (offset === -1 || offset === projects.length - 1) {
+                position =
+                  '-translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
+              }
 
-                if (offset === 1 || offset === -(projects.length - 1)) {
-                  position =
-                    'translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
-                }
+              if (offset === 1 || offset === -(projects.length - 1)) {
+                position =
+                  'translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
+              }
 
-                if (Math.abs(offset) > 1) {
-                  position =
-                    'scale-75 opacity-0 pointer-events-none z-0'
-                }
+              if (Math.abs(offset) > 1) {
+                position =
+                  'scale-75 opacity-0 pointer-events-none z-0'
+              }
+            }
 
                 return (
                   <div

@@ -2,7 +2,7 @@
 
 import FadeInSection from '@/components/FadeInSection';
 import { useEffect, useState } from 'react';
-import { getAbout, AboutData, Skill } from '../../lib/api';
+import { getAbout, AboutData } from '@/lib/api';
 
 export function AboutUs() {
   const [aboutData, setAboutData] = useState<AboutData>({

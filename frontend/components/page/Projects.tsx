@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import FadeInSection from '@/components/FadeInSection'
-import { getProjects, ProjectData } from '../../lib/api'
-import { getImageUrl } from '../../lib/imageUtils'
+import { getProjects, ProjectData } from '@/lib/api'
+import { getImageUrl } from '@/lib/imageUtils'
 
 export function Projects() {
   const [projects, setProjects] = useState<ProjectData[]>([])

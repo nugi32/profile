@@ -1,12 +1,12 @@
 'use client'
 
-import Image from 'next/image'
-import ProfileImage from '@/public/Image.jpeg'
-import { ModeToggle } from '@/components/modeTogggle'
+import Image from 'next/image';
+import { ModeToggle } from '@/components/modeTogggle';
 import FadeInSection from "@/components/FadeInSection";
 import { useEffect, useState } from 'react';
-import { getLandingPage, LandingData } from '../../lib/api';
-import { getImageUrl } from '../../lib/imageUtils';
+import { getLandingPage, LandingData } from '@/lib/api';
+import { getImageUrl } from '@/lib/imageUtils';
+import defaultProfile from '@/public/defaultProfile.jpg';
 
 const defaultNavigation = [
   { name: 'Projects', href: '#projects' },
@@ -83,7 +83,7 @@ export default function LandingPage() {
               />
             ) : (
               <Image
-                src={ProfileImage}
+                src={defaultProfile}
                 alt="Profile Image"
                 priority
                 className="rounded-full shadow-lg 

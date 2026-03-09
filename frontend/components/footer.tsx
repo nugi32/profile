@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { FaGithub, FaLinkedinIn } from "react-icons/fa"
 import { MdEmail } from "react-icons/md"
-import { getFooter, FooterData, SocialLink } from "@/lib/api"
+import { getFooter, FooterData } from "@/lib/api"
 
 export default function Footer() {
   const [footerData, setFooterData] = useState<FooterData>({

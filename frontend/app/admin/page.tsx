@@ -1,37 +1,23 @@
 'use client'
 
 import { useState } from "react"
-import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { SaveIcon, PlusIcon, TrashIcon, XIcon, RefreshCwIcon } from "lucide-react"
+import { SaveIcon, PlusIcon, TrashIcon, CheckCircle , RefreshCwIcon } from "lucide-react"
 import { CheckCircle2Icon, AlertCircleIcon } from "lucide-react"
 import {
-  // Types
-  LandingData,
-  ProjectData,
-  Skill,
-  AboutData,
-  SocialLink,
-  FooterData,
-  ContactData,
-  PortfolioPayload,
-  CompletePortfolio,
-  
   // Functions
   getLandingPage,
   getProjects,
   getAbout,
   getFooter,
-  getContact,
   savePortfolio,
-  getPortfolio
 } from '@/lib/api'
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ModeToggle } from '@/components/modeTogggle';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -489,7 +475,7 @@ export default function AdminPage() {
       {/* OVERLAY ALERT */}
       {alert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop dengan blur */}
+          {/* Backdrop blur */}
           <div 
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={closeAlert}
@@ -544,8 +530,39 @@ export default function AdminPage() {
       )}
 
       {/* Header Section */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[var(--foreground)] dark:text-[var(--foreground)]">Admin Dashboard</h1>
+<div className="flex items-center justify-between mb-8">
+  <h1 className="text-3xl font-bold text-[var(--foreground)]">
+    Admin Dashboard
+  </h1>
+
+  <div className="flex items-center gap-3">
+    <Button
+      onClick={saveAllData}
+      disabled={updatingSection === 'all'}
+      size="lg"
+      className="px-6 py-2"
+    >
+      {updatingSection === 'all' ? (
+        <>
+          <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+          Saving All...
+        </>
+      ) : (
+        <>
+          <SaveIcon className="w-4 h-4 mr-2" />
+          Save All Portfolio
+        </>
+      )}
+    </Button>
+
+    <ModeToggle />
+  </div>
+</div>
+
+      {/* LANDING SECTION */}
+      <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Landing Page</h2>
         <Button 
           onClick={saveAllData} 
           disabled={updatingSection === 'all'}
@@ -559,32 +576,7 @@ export default function AdminPage() {
             </>
           ) : (
             <>
-              <SaveIcon className="w-4 h-4 mr-2" />
-              Save All Portfolio
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* LANDING SECTION */}
-      <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Landing Page</h2>
-<Button 
-          onClick={saveAllData} 
-          disabled={updatingSection === 'all'}
-          size="lg"
-          className="px-6 py-2"
-        >
-          {updatingSection === 'all' ? (
-            <>
-              <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
-              Saving All...
-            </>
-          ) : (
-            <>
-              <SaveIcon className="w-4 h-4 mr-2" />
-              Save All Portfolio
+              <CheckCircle/>
             </>
           )}
         </Button>
@@ -656,28 +648,23 @@ export default function AdminPage() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Projects</h2>
           <div className="flex gap-3">
-            <Button onClick={addProject} size="sm" variant="outline" disabled={updatingSection === 'projects'}>
-              <PlusIcon className="w-4 h-4 mr-2" />
-              Add Project
-            </Button>
-            <Button 
-              onClick={saveAllData} 
-              size="sm"
-              disabled={updatingSection === 'projects'}
-              className="px-4"
-            >
-              {updatingSection === 'projects' ? (
-                <>
-                  <RefreshCwIcon className="w-3 h-3 mr-2 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <SaveIcon className="w-3 h-3 mr-2" />
-                  Update Projects
-                </>
-              )}
-            </Button>
+        <Button 
+          onClick={saveAllData} 
+          disabled={updatingSection === 'all'}
+          size="lg"
+          className="px-6 py-2"
+        >
+          {updatingSection === 'all' ? (
+            <>
+              <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+              Saving All...
+            </>
+          ) : (
+            <>
+              <CheckCircle/>
+            </>
+          )}
+        </Button>
           </div>
         </div>
 
@@ -771,30 +758,33 @@ export default function AdminPage() {
             </p>
           )}
         </div>
+            <Button onClick={addProject} size="sm" variant="outline" disabled={updatingSection === 'projects'} className="mt-4">
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Project
+            </Button>
       </div>
 
       {/* ABOUT SECTION */}
       <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">About Me</h2>
-          <Button 
-            onClick={saveAllData} 
-            size="sm"
-            disabled={updatingSection === 'about'}
-            className="px-4"
-          >
-            {updatingSection === 'about' ? (
-              <>
-                <RefreshCwIcon className="w-3 h-3 mr-2 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              <>
-                <SaveIcon className="w-3 h-3 mr-2" />
-                Update About
-              </>
-            )}
-          </Button>
+        <Button 
+          onClick={saveAllData} 
+          disabled={updatingSection === 'all'}
+          size="lg"
+          className="px-6 py-2"
+        >
+          {updatingSection === 'all' ? (
+            <>
+              <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+              Saving All...
+            </>
+          ) : (
+            <>
+              <CheckCircle/>
+            </>
+          )}
+        </Button>
         </div>
 
         <div className="space-y-4">
@@ -836,10 +826,6 @@ export default function AdminPage() {
 
           <div className="flex justify-between items-center pt-4">
             <h3 className="text-lg font-medium text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Skills</h3>
-            <Button onClick={addSkill} size="sm" variant="outline" disabled={updatingSection === 'about'}>
-              <PlusIcon className="w-4 h-4 mr-2" />
-              Add Skill
-            </Button>
           </div>
 
           <div className="space-y-3">
@@ -888,30 +874,34 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+
+            <Button onClick={addSkill} size="sm" variant="outline" disabled={updatingSection === 'about'} className="mt-4">
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Skill
+            </Button>
       </div>
 
       {/* FOOTER SECTION */}
       <div className="mb-8 p-6 bg-[var(--card)] dark:bg-[var(--card)] rounded-lg border border-[var(--border)] shadow-sm">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Footer</h2>
-          <Button 
-            onClick={saveAllData} 
-            size="sm"
-            disabled={updatingSection === 'footer'}
-            className="px-4"
-          >
-            {updatingSection === 'footer' ? (
-              <>
-                <RefreshCwIcon className="w-3 h-3 mr-2 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              <>
-                <SaveIcon className="w-3 h-3 mr-2" />
-                Update Footer
-              </>
-            )}
-          </Button>
+        <Button 
+          onClick={saveAllData} 
+          disabled={updatingSection === 'all'}
+          size="lg"
+          className="px-6 py-2"
+        >
+          {updatingSection === 'all' ? (
+            <>
+              <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+              Saving All...
+            </>
+          ) : (
+            <>
+              <CheckCircle/>
+            </>
+          )}
+        </Button>
         </div>
 
         <div className="space-y-4">
@@ -933,10 +923,6 @@ export default function AdminPage() {
 
           <div className="flex justify-between items-center pt-4">
             <h3 className="text-lg font-medium text-[var(--card-foreground)] dark:text-[var(--card-foreground)]">Social Links</h3>
-            <Button onClick={addSocial} size="sm" variant="outline" disabled={updatingSection === 'footer'}>
-              <PlusIcon className="w-4 h-4 mr-2" />
-              Add Social Link
-            </Button>
           </div>
 
           <div className="space-y-3">
@@ -977,6 +963,11 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+
+            <Button onClick={addSocial} size="sm" variant="outline" disabled={updatingSection === 'footer'} className="mt-4">
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Social Link
+            </Button>
       </div>
     </div>
   )

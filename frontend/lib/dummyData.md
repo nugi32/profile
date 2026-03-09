@@ -3,7 +3,7 @@ const Landingdata = {
     data: {
         greeting: "Hi, I’m Nugi",
         role: "Web3 Developer & Blockchain Engineer",
-        description: " I design and build decentralized applications (dApps) and secure smart contracts  with a strong focus on scalability, security, and on-chain efficiency.   My expertise spans DeFi protocols, blockchain architecture, and seamlessWeb3 integrations that bridge user experience with trustless systems.",
+        description: "I design and build decentralized applications (dApps) and secure smart contracts  with a strong focus on scalability, security, and on-chain efficiency.   My expertise spans DeFi protocols, blockchain architecture, and seamlessWeb3 integrations that bridge user experience with trustless systems.",
         profilePicture: "/profile.jpg",
         navigation: [
             { name: 'Projects', href: '#projects' },

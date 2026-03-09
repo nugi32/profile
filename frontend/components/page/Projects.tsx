@@ -14,36 +14,55 @@ export function Projects() {
   const dragStart = useRef<number | null>(null)
   const dragEnd = useRef<number | null>(null)
   const isDragging = useRef(false)
+
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+
   const minDrag = 80
+  const minSwipe = 50
 
-  // Fetch projects from MongoDB
+  /* FETCH PROJECTS */
   useEffect(() => {
-    getProjects().then(setProjects);
-  }, []);
+    getProjects().then((data) => {
+      setProjects(data)
+      setCurrent(0)
+    })
+  }, [])
 
-  const next = () =>
-    setCurrent((prev) => (prev === projects.length - 1 ? 0 : prev + 1))
+  const total = projects.length
 
-  const prev = () =>
-    setCurrent((prev) => (prev === 0 ? projects.length - 1 : prev - 1))
+  /* NEXT / PREV */
+  const next = () => {
+    setCurrent((prev) => {
+      if (!total) return 0
+      return (prev + 1) % total
+    })
+  }
 
-  /* ---------------- DESKTOP KEYBOARD ---------------- */
+  const prev = () => {
+    setCurrent((prev) => {
+      if (!total) return 0
+      return (prev - 1 + total) % total
+    })
+  }
+
+  /* KEYBOARD NAVIGATION */
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (window.innerWidth < 768) return
+
       if (e.key === 'ArrowRight') next()
       if (e.key === 'ArrowLeft') prev()
     }
 
     window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [])
 
-  /* ---------------- MOBILE SWIPE ---------------- */
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
-  const minSwipe = 50
+    return () => {
+      window.removeEventListener('keydown', handleKey)
+    }
+  }, [total])
 
+  /* TOUCH EVENTS */
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null)
     setTouchStart(e.targetTouches[0].clientX)
@@ -55,19 +74,23 @@ export function Projects() {
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return
+
     const distance = touchStart - touchEnd
+
     if (distance > minSwipe) next()
     if (distance < -minSwipe) prev()
   }
+
+  if (!total) return null
 
   return (
     <>
       <FadeInSection>
         <section
           id="projects"
-          className="relative py-28 px-6 lg:px-20 
-                     bg-[var(--bg-light-secondary)] 
-                     border-t border-[var(--border)] overflow-hidden"
+          className="relative py-28 px-6 lg:px-20
+          bg-[var(--bg-light-secondary)]
+          border-t border-[var(--border)] overflow-hidden"
         >
           <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-4xl font-bold text-[var(--text-dark)] mb-16">
@@ -88,7 +111,11 @@ export function Projects() {
                 dragEnd.current = e.clientX
               }}
               onPointerUp={() => {
-                if (!isDragging.current || dragStart.current === null || dragEnd.current === null) {
+                if (
+                  !isDragging.current ||
+                  dragStart.current === null ||
+                  dragEnd.current === null
+                ) {
                   isDragging.current = false
                   return
                 }
@@ -110,39 +137,33 @@ export function Projects() {
               onTouchEnd={onTouchEnd}
             >
               {projects.map((project, index) => {
-                const offset = index - current
+                const prevIndex = (current - 1 + total) % total
+                const nextIndex = (current + 1) % total
 
-            let position = 'translate-x-0 scale-100 opacity-100 z-30'
+                let position = ''
 
-            // jika cuma 1 project -> selalu center
-            if (projects.length === 1) {
-              position = 'translate-x-0 scale-100 opacity-100 z-30'
-            } else {
-              if (offset === -1 || offset === projects.length - 1) {
-                position =
-                  '-translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
-              }
-
-              if (offset === 1 || offset === -(projects.length - 1)) {
-                position =
-                  'translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
-              }
-
-              if (Math.abs(offset) > 1) {
-                position =
-                  'scale-75 opacity-0 pointer-events-none z-0'
-              }
-            }
+                if (index === current) {
+                  position = 'translate-x-0 scale-100 opacity-100 z-30'
+                } else if (index === prevIndex) {
+                  position =
+                    '-translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
+                } else if (index === nextIndex) {
+                  position =
+                    'translate-x-[65%] scale-90 opacity-40 blur-sm z-20'
+                } else {
+                  return null
+                }
 
                 return (
                   <div
                     key={index}
-                    className={`absolute transition-all duration-500 ease-in-out w-full max-w-xl ${position}`}
+                    className={`absolute transform-gpu transition-all duration-500 ease-in-out w-full max-w-xl ${position}`}
                   >
-                    <div className="bg-[var(--card)] p-8 rounded-2xl 
-                                    shadow-xl border border-[var(--border)]
-                                    hover:shadow-2xl transition">
-
+                    <div
+                      className="bg-[var(--card)] p-8 rounded-2xl
+                      shadow-xl border border-[var(--border)]
+                      hover:shadow-2xl transition"
+                    >
                       <img
                         src={getImageUrl(project.image)}
                         alt={project.title}
@@ -159,11 +180,11 @@ export function Projects() {
 
                       <button
                         onClick={() => setSelected(index)}
-                        className="mt-6 px-6 py-2 
-                                   bg-[var(--primary)] 
-                                   text-[var(--primary-foreground)] 
-                                   rounded-lg font-semibold 
-                                   hover:scale-105 transition"
+                        className="mt-6 px-6 py-2
+                        bg-[var(--primary)]
+                        text-[var(--primary-foreground)]
+                        rounded-lg font-semibold
+                        hover:scale-105 transition"
                       >
                         View Details
                       </button>
@@ -173,7 +194,7 @@ export function Projects() {
               })}
             </div>
 
-            {/* Indicators */}
+            {/* INDICATORS */}
             <div className="flex justify-center gap-3 mt-10">
               {projects.map((_, index) => (
                 <div
@@ -195,32 +216,29 @@ export function Projects() {
       {selected !== null && (
         <div
           onClick={() => setSelected(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center 
-                     bg-black/60 backdrop-blur-sm px-6"
+          className="fixed inset-0 z-50 flex items-center justify-center
+          bg-black/60 backdrop-blur-sm px-6"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[var(--card)] max-w-xl w-full 
-                       p-8 rounded-2xl shadow-2xl relative"
+            className="bg-[var(--card)] max-w-xl w-full
+            p-8 rounded-2xl shadow-2xl relative"
           >
-           <button
-  onClick={() => setSelected(null)}
-  className="absolute top-3 right-3 
-             w-10 h-10 flex items-center justify-center
-             rounded-full
-             bg-white/90 dark:bg-black/70
-             backdrop-blur-md
-             border border-[var(--border)]
-             shadow-md
-             text-lg font-semibold
-             text-[var(--text-dark)]
-             hover:bg-red-500
-             hover:text-white
-             hover:scale-105
-             transition"
->
-  ✕
-</button>
+            <button
+              onClick={() => setSelected(null)}
+              className="absolute top-3 right-3
+              w-10 h-10 flex items-center justify-center
+              rounded-full
+              bg-white/90 dark:bg-black/70
+              backdrop-blur-md
+              border border-[var(--border)]
+              shadow-md
+              text-lg font-semibold
+              hover:bg-red-500 hover:text-white
+              transition"
+            >
+              ✕
+            </button>
 
             <img
               src={getImageUrl(projects[selected].image)}
@@ -240,11 +258,11 @@ export function Projects() {
               href={projects[selected].link}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-block px-6 py-3 
-                         bg-[var(--primary)] 
-                         text-[var(--primary-foreground)] 
-                         rounded-lg font-semibold 
-                         hover:scale-105 transition"
+              className="mt-6 inline-block px-6 py-3
+              bg-[var(--primary)]
+              text-[var(--primary-foreground)]
+              rounded-lg font-semibold
+              hover:scale-105 transition"
             >
               Visit Project →
             </a>

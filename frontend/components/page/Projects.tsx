@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react'
 import FadeInSection from '@/components/FadeInSection'
 import { getProjects, ProjectData } from '@/lib/api'
-import { getImageUrl } from '@/lib/imageUtils'
 
 export function Projects() {
   const [projects, setProjects] = useState<ProjectData[]>([])
@@ -165,7 +164,7 @@ export function Projects() {
                       hover:shadow-2xl transition"
                     >
                       <img
-                        src={getImageUrl(project.image)}
+                        src={project.image}
                         alt={project.title}
                         className="w-full h-56 object-cover rounded-xl"
                       />
@@ -241,7 +240,7 @@ export function Projects() {
             </button>
 
             <img
-              src={getImageUrl(projects[selected].image)}
+              src={projects[selected].image}
               alt={projects[selected].title}
               className="w-full h-64 object-cover rounded-xl"
             />

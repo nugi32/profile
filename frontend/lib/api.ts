@@ -164,42 +164,27 @@ export interface PortfolioPayload {
   AboutMeData: AboutData
   FooterData: FooterData
 }
+export async function savePortfolio(portfolioData: PortfolioPayload) {
 
-export async function savePortfolio(portfolioData: PortfolioPayload): Promise<{ message: string }> {
-  try {
-    const form = new FormData()
-
-    // Append JSON (without files)
-    const cleanData = JSON.parse(JSON.stringify(portfolioData))
-
-    form.append("data", JSON.stringify(cleanData))
-
-    // landing image
-    if (portfolioData.Landingdata.data.profilePictureFile) {
-      form.append("landingImage", portfolioData.Landingdata.data.profilePictureFile)
-    }
-
-    // project images
-    portfolioData.ProjectsData.data.forEach((project: any, index: number) => {
-      if (project.imageFile) {
-        form.append(`projectImage_${index}`, project.imageFile)
-      }
-    })
-
-    const response = await fetch(`${API_URL}/api/portfolio`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`
-      },
-      body: form
-    })
-
-    if (!response.ok) throw new Error("Failed to save portfolio")
-    return await response.json()
-  } catch (error) {
-    console.error("Error saving portfolio:", error)
-    throw error
+  const payload = {
+    landing: portfolioData.Landingdata.data,
+    projects: portfolioData.ProjectsData.data,
+    about: portfolioData.AboutMeData,
+    footer: portfolioData.FooterData
   }
+
+  const response = await fetch(`${API_URL}/api/portfolio`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`
+    },
+    body: JSON.stringify(payload)
+  })
+
+  if (!response.ok) throw new Error("Failed to save portfolio")
+
+  return response.json()
 }
 
 // ================= GET COMPLETE PORTFOLIO =================

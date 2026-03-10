@@ -2,34 +2,26 @@ const Landing = require("../models/landing");
 const Project = require("../models/project");
 const About = require("../models/about");
 const Footer = require("../models/footer");
-const fs = require("fs");
-const path = require("path");
 
 // Save entire portfolio data
 exports.savePortfolio = async (req, res) => {
   try {
-    const { data } = req.body;
-    if (!data) {
+    const portfolioData = req.body;
+    if (!portfolioData) {
       return res.status(400).json({ message: "No data provided" });
     }
 
-    const portfolioData = JSON.parse(data);
-
     // 1. Save Landing Data
-    if (portfolioData.Landingdata) {
+    if (portfolioData.landing) {
       // log payload to see what arrived (helps debug missing values)
-      console.log("[portfolioController] landing payload:", portfolioData.Landingdata);
+      console.log("[portfolioController] landing payload:", portfolioData.landing);
 
       const landingData = {
-        greeting: portfolioData.Landingdata.data.greeting,
-        role: portfolioData.Landingdata.data.role,
-        description: portfolioData.Landingdata.data.description
+        greeting: portfolioData.landing.greeting,
+        role: portfolioData.landing.role,
+        description: portfolioData.landing.description,
+        profilePicture: portfolioData.landing.profilePicture // Use URL from payload
       };
-
-      // Handle profile picture upload (file comes separately via multer)
-      if (req.files && req.files.landingImage) {
-        landingData.profilePicture = req.files.landingImage[0].path;
-      }
 
       // Upsert (update if exists, create if not).
       // Important: if there are multiple landing documents in the collection,
@@ -45,37 +37,33 @@ exports.savePortfolio = async (req, res) => {
     }
 
     // 2. Save Projects Data
-    if (portfolioData.ProjectsData && portfolioData.ProjectsData.data) {
+    if (portfolioData.projects) {
       // Delete all existing projects
       await Project.deleteMany({});
 
       // Create new projects
-      for (let i = 0; i < portfolioData.ProjectsData.data.length; i++) {
-        const projectItem = portfolioData.ProjectsData.data[i];
+      for (let i = 0; i < portfolioData.projects.length; i++) {
+        const projectItem = portfolioData.projects[i];
         const projectData = {
           title: projectItem.title,
           short: projectItem.short,
           details: projectItem.details,
-          link: projectItem.link
+          link: projectItem.link,
+          image: projectItem.image // Use URL from payload
         };
-
-        // Handle project image upload
-        if (req.files && req.files[`projectImage_${i}`]) {
-          projectData.image = req.files[`projectImage_${i}`][0].path;
-        }
 
         await Project.create(projectData);
       }
     }
 
     // 3. Save About Data
-    if (portfolioData.AboutMeData) {
+    if (portfolioData.about) {
       const aboutData = {
-        subTitle: portfolioData.AboutMeData.subTitle,
-        whoIam: portfolioData.AboutMeData.whoIam,
-        experience: portfolioData.AboutMeData.experience,
-        projects: portfolioData.AboutMeData.projects,
-        skills: portfolioData.AboutMeData.skills || []
+        subTitle: portfolioData.about.subTitle,
+        whoIam: portfolioData.about.whoIam,
+        experience: portfolioData.about.experience,
+        projects: portfolioData.about.projects,
+        skills: portfolioData.about.skills || []
       };
 
       // keep same semantics as landing; pick the most recently created document
@@ -86,10 +74,10 @@ exports.savePortfolio = async (req, res) => {
     }
 
     // 4. Save Footer Data
-    if (portfolioData.FooterData) {
+    if (portfolioData.footer) {
       const footerData = {
-        title: portfolioData.FooterData.title,
-        socialLinks: portfolioData.FooterData.socialLinks || []
+        title: portfolioData.footer.title,
+        socialLinks: portfolioData.footer.socialLinks || []
       };
 
       // pick newest footer entry when multiple exist

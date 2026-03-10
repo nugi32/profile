@@ -7,7 +7,7 @@ exports.createLanding = async (req, res) => {
       greeting: req.body.greeting,
       role: req.body.role,
       description: req.body.description,
-      profilePicture: req.file ? req.file.path : req.body.profilePicture || null
+      profilePicture: req.body.profilePicture || null
     });
 
     const saved = await newLanding.save();

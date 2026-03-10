@@ -2,7 +2,6 @@ require("dotenv").config()
 
 const express = require("express")
 const mongoose = require("mongoose")
-const path = require("path")
 
 const app = express()
 const cors = require("cors")
@@ -23,8 +22,12 @@ app.use(express.urlencoded({ extended:false }))
 // allow cross-origin requests from the frontend
 app.use(cors())
 
-// static files
-app.use("/uploads", express.static(path.join(__dirname,"uploads")))
+app.get("/", (req, res) => {
+  res.json({
+    status: "API running",
+    service: "portfolio-backend"
+  })
+})
 
 // routes
 app.use("/api/portfolio", require("./routes/portfolioRoutes"))
@@ -35,6 +38,9 @@ app.use("/api/footer", require("./routes/footerRoutes"))
 app.use("/api/contact", require("./routes/contactRoutes"))
 
 // start server
+/*
 app.listen(PORT, ()=>{
   console.log(`Server running on port ${PORT}`)
 })
+  */
+module.exports = app;

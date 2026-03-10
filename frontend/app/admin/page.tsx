@@ -19,6 +19,25 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ModeToggle } from '@/components/modeTogggle';
 
+async function uploadToCloudinary(file: File) {
+  const formData = new FormData()
+
+  formData.append("file", file)
+  formData.append("upload_preset", "portfolio_upload")
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method: "POST",
+      body: formData
+    }
+  )
+
+  const data = await res.json()
+
+  return data.secure_url
+}
+
 export default function AdminPage() {
   const router = useRouter();
   
@@ -100,9 +119,7 @@ export default function AdminPage() {
       try {
         // Load Landing Data
         const landingData = await getLandingPage();
-        const landingImageUrl = landingData?.profilePicture
-          ? `${process.env.NEXT_PUBLIC_API_URL}/${landingData.profilePicture}`
-          : "";
+        const landingImageUrl = landingData?.profilePicture || "";
 
         // Load Projects Data
         const projectsData = await getProjects();
@@ -110,7 +127,7 @@ export default function AdminPage() {
         // Process projects images
         const processedProjects = projectsData?.map((project: any) => ({
           ...project,
-          preview: project.image ? `${process.env.NEXT_PUBLIC_API_URL}/${project.image}` : "",
+          preview: project.image || "",
           imageFile: null
         })) || [];
 
@@ -445,24 +462,81 @@ export default function AdminPage() {
   /* ================= SAVE ALL ================= */
 
   const saveAllData = async () => {
-    setUpdatingSection('all')
-    try {
-      // debug payload before sending
-      console.log("SAVE PAYLOAD (frontend):", JSON.stringify(portfolioData, null, 2))
+  setUpdatingSection('all')
 
-      await savePortfolio(portfolioData)
-      clearSectionDirty('landing');
-      clearSectionDirty('projects');
-      clearSectionDirty('about');
-      clearSectionDirty('footer');
-      setAlert({ type: "success", message: "All portfolio data saved successfully!" })
-    } catch (err) {
-      console.error("Failed to save portfolio data", err)
-      setAlert({ type: "error", message: "Failed to save all portfolio data." })
-    } finally {
-      setUpdatingSection(null)
+  try {
+
+    const payload = JSON.parse(JSON.stringify(portfolioData))
+
+    // remove UI fields
+    delete payload.Landingdata.data.preview
+    delete payload.Landingdata.data.profilePictureFile
+
+    payload.ProjectsData.data = payload.ProjectsData.data.map((p:any)=>({
+      title: p.title,
+      short: p.short,
+      details: p.details,
+      link: p.link,
+      image: p.image
+    }))
+
+    /* ================= LANDING IMAGE ================= */
+
+    if (portfolioData.Landingdata.data.profilePictureFile) {
+
+      const url = await uploadToCloudinary(
+        portfolioData.Landingdata.data.profilePictureFile
+      )
+
+      payload.Landingdata.data.profilePicture = url
+      payload.Landingdata.data.profilePictureFile = null
     }
+
+    /* ================= PROJECT IMAGES ================= */
+
+    for (let i = 0; i < portfolioData.ProjectsData.data.length; i++) {
+
+      const project = portfolioData.ProjectsData.data[i]
+
+      if (project.imageFile) {
+
+        const url = await uploadToCloudinary(project.imageFile)
+
+        payload.ProjectsData.data[i].image = url
+        payload.ProjectsData.data[i].imageFile = null
+      }
+
+    }
+
+    console.log("FINAL PAYLOAD", payload)
+
+    await savePortfolio(payload)
+
+    clearSectionDirty('landing')
+    clearSectionDirty('projects')
+    clearSectionDirty('about')
+    clearSectionDirty('footer')
+
+    setAlert({
+      type: "success",
+      message: "All portfolio data saved successfully!"
+    })
+
+  } catch (err) {
+
+    console.error("Failed to save portfolio data", err)
+
+    setAlert({
+      type: "error",
+      message: "Failed to save all portfolio data."
+    })
+
+  } finally {
+
+    setUpdatingSection(null)
+
   }
+}
 
   const closeAlert = () => {
     setAlert(null)

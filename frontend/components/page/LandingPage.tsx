@@ -5,7 +5,6 @@ import { ModeToggle } from '@/components/modeTogggle';
 import FadeInSection from "@/components/FadeInSection";
 import { useEffect, useState } from 'react';
 import { getLandingPage, LandingData } from '@/lib/api';
-import { getImageUrl } from '@/lib/imageUtils';
 import defaultProfile from '@/public/defaultProfile.jpg';
 
 const defaultNavigation = [
@@ -75,7 +74,7 @@ export default function LandingPage() {
           <div className="flex-shrink-0">
             {landingData.profilePicture ? (
               <img
-                src={getImageUrl(landingData.profilePicture)}
+                src={landingData.profilePicture}
                 alt="Profile Image"
                 className="rounded-full shadow-lg 
                             w-64 h-64 object-cover 

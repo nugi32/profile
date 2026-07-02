@@ -6,9 +6,8 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;*/
 
-import type { NextConfig } from "next";
 /** @type {import('next').NextConfig} */
-const nextConfig: NextConfig= {
+const nextConfig = {
   reactStrictMode: true,
   experimental: {
     mdxRs: true,

@@ -1,5 +1,5 @@
-import { KnowledgeGraph } from "@/components/knowledge/knowledge-graph";
-import { SectionHeader } from "@/components/layout/section-header";
+import { KnowledgeGraph } from "../../components/knowledge/knowledge-graph";
+import { SectionHeader } from "../../components/layout/section-header";
 
 export default function KnowledgePage() {
   return (

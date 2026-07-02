@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDate, splitMarkdownLines } from "@/lib/utils";
 import { getNotionJournalEntryBySlug, getNotionJournalEntries } from "@/lib/notion";
-import { SectionHeader } from "@/components/layout/section-header";
-import { Tag } from "@/components/ui/tag";
+import { SectionHeader } from "../../../components/layout/section-header";
+import { Tag } from "../../../components/ui/tag";
 
 export async function generateStaticParams() {
   const entries = await getNotionJournalEntries();

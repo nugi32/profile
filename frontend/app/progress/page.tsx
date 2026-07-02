@@ -1,5 +1,5 @@
-import { ProgressTracker } from "@/components/sections/progress-tracker";
-import { SectionHeader } from "@/components/layout/section-header";
+import { ProgressTracker } from "../../components/sections/progress-tracker";
+import { SectionHeader } from "../../components/layout/section-header";
 
 export default function ProgressPage() {
   return (

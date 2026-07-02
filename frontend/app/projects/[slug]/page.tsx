@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LuArrowLeft, LuGithub, LuExternalLink } from "react-icons/lu";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { projects } from "@/data/projects";
+import { Badge } from "../../../components/ui/badge";
+import { Separator } from "../../../components/ui/separator";
+import { projects } from "../../../data/projects";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));

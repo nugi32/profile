@@ -1,7 +1,7 @@
-import { JournalCard } from "@/components/cards/journal-card";
-import { SectionHeader } from "@/components/layout/section-header";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { journalEntries } from "@/data/journal";
+import { JournalCard } from "../../components/cards/journal-card";
+import { SectionHeader } from "../../components/layout/section-header";
+import { ScrollReveal } from "../../components/ui/scroll-reveal";
+import { journalEntries } from "../../data/journal";
 
 export default function JournalPage() {
   return (

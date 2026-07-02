@@ -1,7 +1,7 @@
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { SectionHeader } from "@/components/layout/section-header";
-import { ProjectCard } from "@/components/cards/project-card";
-import { projects } from "@/data/projects";
+import { ScrollReveal } from "../../components/ui/scroll-reveal";
+import { SectionHeader } from "../../components/layout/section-header";
+import { ProjectCard } from "../../components/cards/project-card";
+import { projects } from "../../data/projects";
 
 export default function ProjectsPage() {
   return (

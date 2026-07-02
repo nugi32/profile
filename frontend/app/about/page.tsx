@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { About } from "@/components/sections/about";
-import { SectionHeader } from "@/components/layout/section-header";
+import { About } from "../../components/sections/about";
+import { SectionHeader } from "../../components/layout/section-header";
 import { siteConfig } from "@/lib/site-config";
 
 export default function AboutPage() {

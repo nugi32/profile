@@ -22,7 +22,7 @@ export function About() {
                 fontSize="16"
                 fill="hsl(210 30% 92%)"
               >
-                J.D.
+                N
               </text>
             </svg>
           </div>
@@ -54,7 +54,7 @@ export function About() {
                 What I&apos;m learning
               </h3>
               <p className="mt-2 text-sm text-muted">
-                Bayesian statistics, market microstructure, zero-knowledge
+                Decentralized systems, market microstructure, zero-knowledge
                 systems, and the philosophy of mind.
               </p>
             </div>

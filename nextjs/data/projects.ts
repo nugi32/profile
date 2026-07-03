@@ -17,7 +17,7 @@ export const projects: Project[] = [
       "Custom charting layer built without third-party charting libraries",
     ],
     githubUrl: "https://github.com/johndoe/quant-terminal",
-    demoUrl: "https://demo.johndoe.dev/quant-terminal",
+    demoUrl: "https://team-chain-v2.vercel.app",
     accent: "ice",
     featured: true,
   },

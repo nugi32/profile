@@ -69,6 +69,20 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'journal-entries': JournalEntry;
+    projects: Project;
+    'knowledge-nodes': KnowledgeNode;
+    'knowledge-edges': KnowledgeEdge;
+    'current-focus': CurrentFocus;
+    'learning-items': LearningItem;
+    books: Book;
+    papers: Paper;
+    'social-links': SocialLink;
+    metrics: Metric;
+    'monthly-deep-work': MonthlyDeepWork;
+    'quarterly-reading': QuarterlyReading;
+    timeline: Timeline;
+    'weird-thoughts': WeirdThought;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +92,20 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'journal-entries': JournalEntriesSelect<false> | JournalEntriesSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'knowledge-nodes': KnowledgeNodesSelect<false> | KnowledgeNodesSelect<true>;
+    'knowledge-edges': KnowledgeEdgesSelect<false> | KnowledgeEdgesSelect<true>;
+    'current-focus': CurrentFocusSelect<false> | CurrentFocusSelect<true>;
+    'learning-items': LearningItemsSelect<false> | LearningItemsSelect<true>;
+    books: BooksSelect<false> | BooksSelect<true>;
+    papers: PapersSelect<false> | PapersSelect<true>;
+    'social-links': SocialLinksSelect<false> | SocialLinksSelect<true>;
+    metrics: MetricsSelect<false> | MetricsSelect<true>;
+    'monthly-deep-work': MonthlyDeepWorkSelect<false> | MonthlyDeepWorkSelect<true>;
+    'quarterly-reading': QuarterlyReadingSelect<false> | QuarterlyReadingSelect<true>;
+    timeline: TimelineSelect<false> | TimelineSelect<true>;
+    'weird-thoughts': WeirdThoughtsSelect<false> | WeirdThoughtsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -163,6 +191,204 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journal-entries".
+ */
+export interface JournalEntry {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  readingTime: number;
+  content: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  description: string;
+  longDescription: string;
+  technologies?:
+    | {
+        technology: string;
+        id?: string | null;
+      }[]
+    | null;
+  status: 'Live' | 'In Development' | 'Research' | 'Archived';
+  achievements?:
+    | {
+        achievement: string;
+        id?: string | null;
+      }[]
+    | null;
+  githubUrl: string;
+  demoUrl?: string | null;
+  accent: 'ice' | 'amber';
+  featured: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "knowledge-nodes".
+ */
+export interface KnowledgeNode {
+  id: string;
+  label: string;
+  group: 'technology' | 'finance' | 'foundation' | 'abstract';
+  weight: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "knowledge-edges".
+ */
+export interface KnowledgeEdge {
+  id: string;
+  source: string | KnowledgeNode;
+  target: string | KnowledgeNode;
+  strength: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "current-focus".
+ */
+export interface CurrentFocus {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-items".
+ */
+export interface LearningItem {
+  id: string;
+  topic: string;
+  progress: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "books".
+ */
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  status: 'Reading' | 'Queued' | 'Finished';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "papers".
+ */
+export interface Paper {
+  id: string;
+  title: string;
+  author: string;
+  status: 'Reading' | 'Queued' | 'Finished';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-links".
+ */
+export interface SocialLink {
+  id: string;
+  label: string;
+  href: string;
+  icon: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics".
+ */
+export interface Metric {
+  id: string;
+  label: string;
+  value: number;
+  suffix?: string | null;
+  icon: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "monthly-deep-work".
+ */
+export interface MonthlyDeepWork {
+  id: string;
+  month: string;
+  hours: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quarterly-reading".
+ */
+export interface QuarterlyReading {
+  id: string;
+  quarter: string;
+  books: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeline".
+ */
+export interface Timeline {
+  id: string;
+  year: string;
+  theme: string;
+  items?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weird-thoughts".
+ */
+export interface WeirdThought {
+  id: string;
+  quote: string;
+  context?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -192,6 +418,62 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'journal-entries';
+        value: string | JournalEntry;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: string | Project;
+      } | null)
+    | ({
+        relationTo: 'knowledge-nodes';
+        value: string | KnowledgeNode;
+      } | null)
+    | ({
+        relationTo: 'knowledge-edges';
+        value: string | KnowledgeEdge;
+      } | null)
+    | ({
+        relationTo: 'current-focus';
+        value: string | CurrentFocus;
+      } | null)
+    | ({
+        relationTo: 'learning-items';
+        value: string | LearningItem;
+      } | null)
+    | ({
+        relationTo: 'books';
+        value: string | Book;
+      } | null)
+    | ({
+        relationTo: 'papers';
+        value: string | Paper;
+      } | null)
+    | ({
+        relationTo: 'social-links';
+        value: string | SocialLink;
+      } | null)
+    | ({
+        relationTo: 'metrics';
+        value: string | Metric;
+      } | null)
+    | ({
+        relationTo: 'monthly-deep-work';
+        value: string | MonthlyDeepWork;
+      } | null)
+    | ({
+        relationTo: 'quarterly-reading';
+        value: string | QuarterlyReading;
+      } | null)
+    | ({
+        relationTo: 'timeline';
+        value: string | Timeline;
+      } | null)
+    | ({
+        relationTo: 'weird-thoughts';
+        value: string | WeirdThought;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -274,6 +556,191 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journal-entries_select".
+ */
+export interface JournalEntriesSelect<T extends boolean = true> {
+  slug?: T;
+  title?: T;
+  description?: T;
+  date?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  readingTime?: T;
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  slug?: T;
+  name?: T;
+  tagline?: T;
+  description?: T;
+  longDescription?: T;
+  technologies?:
+    | T
+    | {
+        technology?: T;
+        id?: T;
+      };
+  status?: T;
+  achievements?:
+    | T
+    | {
+        achievement?: T;
+        id?: T;
+      };
+  githubUrl?: T;
+  demoUrl?: T;
+  accent?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "knowledge-nodes_select".
+ */
+export interface KnowledgeNodesSelect<T extends boolean = true> {
+  id?: T;
+  label?: T;
+  group?: T;
+  weight?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "knowledge-edges_select".
+ */
+export interface KnowledgeEdgesSelect<T extends boolean = true> {
+  source?: T;
+  target?: T;
+  strength?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "current-focus_select".
+ */
+export interface CurrentFocusSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  icon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-items_select".
+ */
+export interface LearningItemsSelect<T extends boolean = true> {
+  topic?: T;
+  progress?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "books_select".
+ */
+export interface BooksSelect<T extends boolean = true> {
+  title?: T;
+  author?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "papers_select".
+ */
+export interface PapersSelect<T extends boolean = true> {
+  title?: T;
+  author?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-links_select".
+ */
+export interface SocialLinksSelect<T extends boolean = true> {
+  label?: T;
+  href?: T;
+  icon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "metrics_select".
+ */
+export interface MetricsSelect<T extends boolean = true> {
+  label?: T;
+  value?: T;
+  suffix?: T;
+  icon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "monthly-deep-work_select".
+ */
+export interface MonthlyDeepWorkSelect<T extends boolean = true> {
+  month?: T;
+  hours?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quarterly-reading_select".
+ */
+export interface QuarterlyReadingSelect<T extends boolean = true> {
+  quarter?: T;
+  books?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeline_select".
+ */
+export interface TimelineSelect<T extends boolean = true> {
+  year?: T;
+  theme?: T;
+  items?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weird-thoughts_select".
+ */
+export interface WeirdThoughtsSelect<T extends boolean = true> {
+  quote?: T;
+  context?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

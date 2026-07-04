@@ -35,7 +35,7 @@ export default buildConfig({
   cors: [
     'http://localhost:3000',
     'http://localhost:3001',
-    'nugiprofile.netlify.app',
+    'https://nugiprofile.netlify.app',
     'https://nugi-profile.vercel.app',
   ],
   admin: {

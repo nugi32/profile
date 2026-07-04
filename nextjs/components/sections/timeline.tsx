@@ -1,13 +1,124 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { SectionHeader } from "../layout/section-header";
-import { timeline } from "../../data/timeline";
+import { fetchFromCms } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
+import type { TimelineYear } from "@/types";
+
+type CmsCollectionResponse<T> = {
+  docs: T[];
+};
 
 export function Timeline() {
-  const [active, setActive] = useState(timeline.length - 1);
+  const [data, setData] = useState<TimelineYear[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [noData, setNoData] = useState(false);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchTimeline = async () => {
+      try {
+        setError("");
+        setNoData(false);
+        setLoading(true);
+
+        const response = await fetchFromCms<CmsCollectionResponse<TimelineYear>>("api/timeline");
+        if (!mounted) return;
+
+        const timelineEntries = response.docs ?? [];
+        if (!timelineEntries.length) {
+          setNoData(true);
+          setData(null);
+          return;
+        }
+
+        setData(timelineEntries);
+      } catch (err: any) {
+        if (!mounted) return;
+        console.error(err);
+        setError(err.message || "Failed to load timeline data");
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchTimeline();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (data?.length) {
+      setActive(data.length - 1);
+    }
+  }, [data]);
+
+  if (error) {
+    return (
+      <section className="container py-24">
+        <SectionHeader
+          eyebrow="Growth"
+          title="Intellectual Development Timeline"
+          description="A typed sequence — each year builds on the concepts of the one before it."
+        />
+        <div className="rounded-3xl border border-panel-border bg-panel/50 p-8 text-center text-red-400">
+          <p>Unable to load timeline data.</p>
+          <p className="mt-2 text-sm text-muted">{error}</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (loading) {
+    return (
+      <section className="container py-24">
+        <SectionHeader
+          eyebrow="Growth"
+          title="Intellectual Development Timeline"
+          description="A typed sequence — each year builds on the concepts of the one before it."
+        />
+        <div className="rounded-3xl border border-panel-border bg-panel/50 p-8 text-center text-ice">
+          Loading timeline...
+        </div>
+      </section>
+    );
+  }
+
+  if (noData || !data?.length) {
+    return (
+      <section className="container py-24">
+        <SectionHeader
+          eyebrow="Growth"
+          title="Intellectual Development Timeline"
+          description="A typed sequence — each year builds on the concepts of the one before it."
+        />
+        <div className="rounded-3xl border border-panel-border bg-panel/50 p-8 text-center text-muted">
+          No timeline entries are available from the CMS.
+        </div>
+      </section>
+    );
+  }
+
+  const normalizedTimeline = data.map((entry) => ({
+    ...entry,
+    items:
+      entry.items?.map((item) => {
+        if (typeof item === "string") {
+          return item;
+        }
+
+        return (item as { item?: string } | null)?.item || "";
+      }) ?? [],
+  }));
 
   return (
     <section className="container py-24">
@@ -18,7 +129,7 @@ export function Timeline() {
       />
 
       <div className="flex flex-wrap gap-2">
-        {timeline.map((entry, i) => (
+        {normalizedTimeline.map((entry, i) => (
           <button
             key={entry.year}
             onClick={() => setActive(i)}
@@ -35,7 +146,7 @@ export function Timeline() {
       </div>
 
       <div className="relative mt-10 border-l border-panel-border pl-8">
-        {timeline.map((entry, i) => (
+        {normalizedTimeline.map((entry, i) => (
           <motion.div
             key={entry.year}
             className="relative mb-10 last:mb-0"

@@ -75,6 +75,7 @@ export interface Config {
     'knowledge-nodes': KnowledgeNode;
     'knowledge-edges': KnowledgeEdge;
     'current-focus': CurrentFocus;
+    skills: Skill;
     'learning-items': LearningItem;
     books: Book;
     papers: Paper;
@@ -99,6 +100,7 @@ export interface Config {
     'knowledge-nodes': KnowledgeNodesSelect<false> | KnowledgeNodesSelect<true>;
     'knowledge-edges': KnowledgeEdgesSelect<false> | KnowledgeEdgesSelect<true>;
     'current-focus': CurrentFocusSelect<false> | CurrentFocusSelect<true>;
+    skills: SkillsSelect<false> | SkillsSelect<true>;
     'learning-items': LearningItemsSelect<false> | LearningItemsSelect<true>;
     books: BooksSelect<false> | BooksSelect<true>;
     papers: PapersSelect<false> | PapersSelect<true>;
@@ -179,6 +181,7 @@ export interface User {
 export interface Media {
   id: string;
   alt: string;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -291,6 +294,24 @@ export interface CurrentFocus {
   title: string;
   description: string;
   icon: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "skills".
+ */
+export interface Skill {
+  id: string;
+  category: string;
+  icon: string;
+  skills?:
+    | {
+        name: string;
+        level: number;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -461,6 +482,10 @@ export interface PayloadLockedDocument {
         value: string | CurrentFocus;
       } | null)
     | ({
+        relationTo: 'skills';
+        value: string | Skill;
+      } | null)
+    | ({
         relationTo: 'learning-items';
         value: string | LearningItem;
       } | null)
@@ -566,6 +591,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -671,6 +697,23 @@ export interface CurrentFocusSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   icon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "skills_select".
+ */
+export interface SkillsSelect<T extends boolean = true> {
+  category?: T;
+  icon?: T;
+  skills?:
+    | T
+    | {
+        name?: T;
+        level?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

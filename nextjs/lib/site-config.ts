@@ -10,7 +10,7 @@ export const siteConfig = {
     twitter: "https://x.com/Nug_320",
     email: "mailto:nugrohoadhipratama135@gmail.com",
     rss: "/feed.xml",
-    notion: "https://johndoe.notion.site/journal",
+    notion: "https://app.notion.com/p/4edad03367d5460592856d5809b92f8b?v=32b31dfa5a69413a83b3427c12df2008&source=copy_link",
   },
   nav: [
     { label: "Home", href: "/" },

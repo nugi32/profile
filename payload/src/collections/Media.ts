@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
-    read: () => true,
+    read: () => true,      
   },
   fields: [
     {
@@ -12,5 +12,14 @@ export const Media: CollectionConfig = {
       required: true,
     },
   ],
-  upload: true,
+  upload: {
+    adminThumbnail: 'thumbnail',   
+    mimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+      'image/svg+xml',
+    ], 
+  },
 }

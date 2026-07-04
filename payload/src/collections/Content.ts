@@ -255,6 +255,46 @@ export const CurrentFocus: CollectionConfig = {
   ],
 }
 
+export const Skills: CollectionConfig = {
+  slug: 'skills',
+  admin: {
+    useAsTitle: 'category',
+  },
+  access: {
+    read: () => true,
+  },
+  fields: [
+    {
+      name: 'category',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'icon',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'skills',
+      type: 'array',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'level',
+          type: 'number',
+          required: true,
+          min: 0,
+          max: 100,
+        },
+      ],
+    },
+  ],
+}
+
 export const LearningItems: CollectionConfig = {
   slug: 'learning-items',
   admin: {

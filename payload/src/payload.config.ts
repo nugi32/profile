@@ -13,6 +13,7 @@ import {
   KnowledgeNodes,
   KnowledgeEdges,
   CurrentFocus,
+  Skills,
   LearningItems,
   Books,
   Papers,
@@ -25,15 +26,17 @@ import {
 } from './collections/Content'
 import { Profile } from './collections/Profile'
 
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
   cors: [
-    'http://localhost:3000',   // your Next.js frontend
-    'http://localhost:3001',   // your CMS itself
+    'http://localhost:3000',
+    'http://localhost:3001',
     'nugiprofile.netlify.app',
-    'https://nugi-profile.vercel.app/',
+    'https://nugi-profile.vercel.app',
   ],
   admin: {
     user: Users.slug,
@@ -50,6 +53,7 @@ export default buildConfig({
     KnowledgeNodes,
     KnowledgeEdges,
     CurrentFocus,
+    Skills,
     LearningItems,
     Books,
     Papers,
@@ -69,5 +73,16 @@ export default buildConfig({
     url: process.env.DATABASE_URL || '',
   }),
   sharp,
-  plugins: [],
+
+  plugins: [
+    vercelBlobStorage({
+      enabled: true,
+      collections: {
+        media: {
+          prefix: 'media',
+        },
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+    }),
+  ],
 })

@@ -9,16 +9,16 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { quarterlyReading } from "../../data/metrics";
+import type { QuarterlyReading } from "@/types";
 
-export function ReadingChart() {
+export function ReadingChart({ data }: { data: QuarterlyReading[] }) {
   return (
     <div className="h-64 w-full rounded-2xl border border-panel-border bg-panel/50 p-4">
       <p className="mb-2 px-2 font-mono text-xs uppercase tracking-wider text-muted">
         Books Read — By Quarter
       </p>
       <ResponsiveContainer width="100%" height="85%">
-        <BarChart data={quarterlyReading} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <CartesianGrid stroke="hsl(220 20% 16%)" vertical={false} />
           <XAxis
             dataKey="quarter"

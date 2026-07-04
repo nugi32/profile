@@ -27,8 +27,6 @@ export function CommandPalette({
   const entries: Entry[] = useMemo(
     () => [
       ...siteConfig.nav.map((n) => ({ label: n.label, href: n.href, group: "Navigate" })),
-      ...projects.map((p) => ({ label: p.name, href: `/projects/${p.slug}`, group: "Projects" })),
-      ...journalEntries.map((j) => ({ label: j.title, href: `/journal/${j.slug}`, group: "Journal" })),
     ],
     []
   );

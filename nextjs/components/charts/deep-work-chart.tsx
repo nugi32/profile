@@ -9,16 +9,16 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { monthlyDeepWork } from "../../data/metrics";
+import type { MonthlyDeepWork } from "@/types";
 
-export function DeepWorkChart() {
+export function DeepWorkChart({ data }: { data: MonthlyDeepWork[] }) {
   return (
     <div className="h-64 w-full rounded-2xl border border-panel-border bg-panel/50 p-4">
       <p className="mb-2 px-2 font-mono text-xs uppercase tracking-wider text-muted">
         Deep Work Hours — Last 6 Months
       </p>
       <ResponsiveContainer width="100%" height="85%">
-        <AreaChart data={monthlyDeepWork} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="deepWorkFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#7dd3fc" stopOpacity={0.35} />

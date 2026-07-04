@@ -10,12 +10,10 @@ import { WeirdThoughts } from "../components/sections/weird-thoughts";
 import { ProgressTracker } from "../components/sections/progress-tracker";
 import { LearningDashboard } from "../components/sections/learning-dashboard";
 import { Separator } from "../components/ui/separator";
-import { projects } from "../data/projects";
 import { getNotionJournalEntries } from "@/lib/notion";
 
 export default async function HomePage() {
   const journalEntries = await getNotionJournalEntries();
-  const featured = projects.filter((project) => project.featured);
 
   return (
     <>
@@ -27,7 +25,7 @@ export default async function HomePage() {
       <Separator />
       <Skills />
       <Separator />
-      <FeaturedProjects projects={featured} />
+      <FeaturedProjects />
       <Separator />
       <JournalPreview entries={journalEntries} />
       <Separator />

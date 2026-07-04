@@ -6,6 +6,18 @@ import { cn } from "@/lib/utils";
 import type { Project } from "@/types";
 
 export function ProjectCard({ project, reverse }: { project: Project; reverse?: boolean }) {
+  const cmsBaseUrl = process.env.NEXT_PUBLIC_CMS_URL?.replace(/\/+$/, "") ?? "";
+  const rawImageSrc =
+    typeof project.image === "object" && project.image && "url" in project.image && project.image.url
+      ? project.image.url
+      : project.imageUrl;
+
+  const imageSrc = rawImageSrc
+    ? rawImageSrc.startsWith("/") && cmsBaseUrl
+      ? `${cmsBaseUrl}${rawImageSrc}`
+      : rawImageSrc
+    : undefined;
+
   return (
     <div
       className={cn(
@@ -16,15 +28,15 @@ export function ProjectCard({ project, reverse }: { project: Project; reverse?: 
       <div
         className={cn(
           "relative aspect-[4/3] overflow-hidden rounded-2xl border border-panel-border",
-          !project.imageUrl &&
+          !imageSrc &&
             (project.accent === "ice"
               ? "bg-gradient-to-br from-ice/25 via-panel to-background"
               : "bg-gradient-to-br from-amber/25 via-panel to-background")
         )}
       >
-        {project.imageUrl ? (
+        {imageSrc ? (
           <Image
-            src={project.imageUrl}
+            src={imageSrc}
             alt={project.name}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
@@ -50,20 +62,26 @@ export function ProjectCard({ project, reverse }: { project: Project; reverse?: 
         <p className="mt-3 text-sm leading-relaxed text-muted">{project.description}</p>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          {project.technologies.map((tech) => (
-            <Badge key={tech} variant="outline">
-              {tech}
-            </Badge>
-          ))}
+          {(project.technologies ?? []).map((tech, index) => {
+            const label = typeof tech === "string" ? tech : tech.technology;
+            return (
+              <Badge key={`${label}-${index}`} variant="outline">
+                {label}
+              </Badge>
+            );
+          })}
         </div>
 
         <ul className="mt-5 flex flex-col gap-2">
-          {project.achievements.slice(0, 2).map((achievement) => (
-            <li key={achievement} className="flex gap-2 text-sm text-foreground/80">
-              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ice" />
-              {achievement}
-            </li>
-          ))}
+          {(project.achievements ?? []).slice(0, 2).map((achievement, index) => {
+            const label = typeof achievement === "string" ? achievement : achievement.achievement;
+            return (
+              <li key={`${label}-${index}`} className="flex gap-2 text-sm text-foreground/80">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ice" />
+                {label}
+              </li>
+            );
+          })}
         </ul>
 
         <div className="mt-6 flex items-center gap-4">

@@ -68,11 +68,14 @@ export function Hero() {
   // Error state
   if (error) {
     return (
-      <section className="flex min-h-[92vh] items-center justify-center bg-black">
-        <div className="max-w-md px-6 text-center">
+      <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
+        <AuroraGlow />
+        <div className="container relative z-10 max-w-md px-6 text-center">
           <div className="mx-auto mb-6 text-6xl">⚠️</div>
-          <h2 className="mb-4 text-3xl font-medium">Unable to Load Profile</h2>
-          <p className="mb-8 text-muted-foreground">{error}</p>
+          <h2 className="mb-4 font-display text-3xl font-medium text-foreground">
+            Unable to Load Profile
+          </h2>
+          <p className="mb-8 text-foreground/70">{error}</p>
           <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </section>
@@ -82,16 +85,18 @@ export function Hero() {
   // No data state (successful response but empty/missing data)
   if (noData) {
     return (
-      <section className="relative flex min-h-[92vh] items-center overflow-hidden bg-black">
+      <section className="relative flex min-h-[92vh] items-center overflow-hidden">
         <AuroraGlow />
         <div className="container relative z-10 flex flex-col items-center justify-center py-32 text-center">
           <div className="mx-auto mb-8 text-7xl opacity-40">📭</div>
-          <h2 className="mb-4 text-4xl font-medium text-white">No Profile Data Yet</h2>
-          <p className="max-w-md text-muted-foreground">
+          <h2 className="mb-4 font-display text-4xl font-medium text-foreground">
+            No Profile Data Yet
+          </h2>
+          <p className="max-w-md text-foreground/70">
             The backend responded successfully, but no profile information is available at the moment.
           </p>
-          <Button 
-            onClick={() => window.location.reload()} 
+          <Button
+            onClick={() => window.location.reload()}
             className="mt-8"
             variant="outline"
           >
@@ -105,8 +110,11 @@ export function Hero() {
   // Loading state
   if (loading) {
     return (
-      <section className="flex min-h-[92vh] items-center justify-center bg-black">
-        <div className="text-ice">Loading profile...</div>
+      <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
+        <AuroraGlow />
+        <div className="relative z-10 font-mono text-sm uppercase tracking-widest text-ice">
+          Loading profile...
+        </div>
       </section>
     );
   }

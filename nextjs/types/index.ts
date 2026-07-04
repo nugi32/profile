@@ -4,13 +4,14 @@ export interface Project {
   tagline: string;
   description: string;
   longDescription: string;
-  technologies: string[];
+  technologies: Array<string | { technology: string; id?: string | null }>;
   status: "Live" | "In Development" | "Research" | "Archived";
-  achievements: string[];
+  achievements: Array<string | { achievement: string; id?: string | null }>;
   githubUrl: string;
   demoUrl?: string;
   accent: "ice" | "amber";
   featured: boolean;
+  image?: { url?: string | null; [key: string]: unknown } | string | null;
   imageUrl?: string;
 }
 

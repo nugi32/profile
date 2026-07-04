@@ -134,6 +134,12 @@ export const Projects: CollectionConfig = {
       required: false,
     },
     {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
       name: 'accent',
       type: 'select',
       required: true,

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDate, splitMarkdownLines } from "@/lib/utils";
 import { getNotionJournalEntryBySlug, getNotionJournalEntries } from "@/lib/notion";
+import BlockRenderer from "../../notion/BlockRenderer";
 import { SectionHeader } from "../../../components/layout/section-header";
 import { Tag } from "../../../components/ui/tag";
 
@@ -44,6 +45,23 @@ function renderMarkdown(content: string) {
   });
 }
 
+function NotionBlockTree({ blocks }: { blocks: any[] }) {
+  return (
+    <>
+      {blocks.map((block) => (
+        <div key={block.id}>
+          <BlockRenderer block={block} />
+          {block.children && block.type !== "table" && block.children.length > 0 && (
+            <div className="ml-6">
+              <NotionBlockTree blocks={block.children} />
+            </div>
+          )}
+        </div>
+      ))}
+    </>
+  );
+}
+
 export default async function JournalEntryPage({
   params,
 }: {
@@ -68,8 +86,19 @@ export default async function JournalEntryPage({
           <Tag key={tag}>{tag}</Tag>
         ))}
       </div>
+      {entry.description ? (
+        <p className="mb-8 max-w-3xl text-base leading-relaxed text-foreground/80">
+          {entry.description}
+        </p>
+      ) : null}
       <div className="rounded-3xl border border-panel-border bg-panel/50 p-8 text-foreground">
-        {renderMarkdown(entry.content)}
+        {entry.contentBlocks && entry.contentBlocks.length > 0 ? (
+          <div className="space-y-2">
+            <NotionBlockTree blocks={entry.contentBlocks} />
+          </div>
+        ) : (
+          renderMarkdown(entry.content)
+        )}
       </div>
       <div className="mt-10">
         <Link href="/journal" className="text-sm font-mono uppercase tracking-[0.32em] text-ice transition-colors hover:text-foreground">

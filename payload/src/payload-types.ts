@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    profile: Profile;
     'journal-entries': JournalEntry;
     projects: Project;
     'knowledge-nodes': KnowledgeNode;
@@ -92,6 +93,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    profile: ProfileSelect<false> | ProfileSelect<true>;
     'journal-entries': JournalEntriesSelect<false> | JournalEntriesSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'knowledge-nodes': KnowledgeNodesSelect<false> | KnowledgeNodesSelect<true>;
@@ -190,6 +192,20 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Site owner profile (single entry)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profile".
+ */
+export interface Profile {
+  id: string;
+  name: string;
+  bio?: string | null;
+  photo?: (string | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "journal-entries".
  */
@@ -236,6 +252,7 @@ export interface Project {
     | null;
   githubUrl: string;
   demoUrl?: string | null;
+  image?: (string | null) | Media;
   accent: 'ice' | 'amber';
   featured: boolean;
   updatedAt: string;
@@ -420,6 +437,10 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
+        relationTo: 'profile';
+        value: string | Profile;
+      } | null)
+    | ({
         relationTo: 'journal-entries';
         value: string | JournalEntry;
       } | null)
@@ -559,6 +580,17 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profile_select".
+ */
+export interface ProfileSelect<T extends boolean = true> {
+  name?: T;
+  bio?: T;
+  photo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "journal-entries_select".
  */
 export interface JournalEntriesSelect<T extends boolean = true> {
@@ -602,6 +634,7 @@ export interface ProjectsSelect<T extends boolean = true> {
       };
   githubUrl?: T;
   demoUrl?: T;
+  image?: T;
   accent?: T;
   featured?: T;
   updatedAt?: T;

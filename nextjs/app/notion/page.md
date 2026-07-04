@@ -1,4 +1,4 @@
-import { getNotionData } from "@/lib/notionTest";
+import { getNotionData } from "@/lib/notion";
 import BlockRenderer from "./BlockRenderer";
 
 function BlockTree({

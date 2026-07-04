@@ -11,6 +11,14 @@ export interface Project {
   demoUrl?: string;
   accent: "ice" | "amber";
   featured: boolean;
+  imageUrl?: string;
+}
+
+export interface NotionContentBlock {
+  id: string;
+  type: string;
+  children?: NotionContentBlock[];
+  [key: string]: unknown;
 }
 
 export interface JournalEntry {
@@ -21,6 +29,7 @@ export interface JournalEntry {
   tags: string[];
   readingTime: number;
   content: string;
+  contentBlocks?: NotionContentBlock[];
 }
 
 export interface TimelineYear {

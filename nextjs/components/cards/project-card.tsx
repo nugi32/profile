@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { LuGithub, LuExternalLink } from "react-icons/lu";
 import { Badge } from "../ui/badge";
@@ -15,16 +16,27 @@ export function ProjectCard({ project, reverse }: { project: Project; reverse?: 
       <div
         className={cn(
           "relative aspect-[4/3] overflow-hidden rounded-2xl border border-panel-border",
-          project.accent === "ice"
-            ? "bg-gradient-to-br from-ice/25 via-panel to-background"
-            : "bg-gradient-to-br from-amber/25 via-panel to-background"
+          !project.imageUrl &&
+            (project.accent === "ice"
+              ? "bg-gradient-to-br from-ice/25 via-panel to-background"
+              : "bg-gradient-to-br from-amber/25 via-panel to-background")
         )}
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-display text-4xl text-foreground/20">
-            {project.name}
-          </span>
-        </div>
+        {project.imageUrl ? (
+          <Image
+            src={project.imageUrl}
+            alt={project.name}
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="font-display text-4xl text-foreground/20">
+              {project.name}
+            </span>
+          </div>
+        )}
         <div className="absolute left-4 top-4">
           <Badge variant={project.accent}>{project.status}</Badge>
         </div>

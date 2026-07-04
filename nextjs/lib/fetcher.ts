@@ -1,34 +1,35 @@
-import axios from "axios"
+// lib/fetcher.ts
+import axios from "axios";
 
-const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? process.env.CMS_URL ?? ""
+const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? process.env.CMS_URL ?? "";
 
 function resolveCmsUrl(endpoint: string) {
-  const base = cmsUrl.replace(/\/+$/, "")
-  const path = endpoint.replace(/^\/+/, "")
-  return `${base}/${path}`
+  const base = cmsUrl.replace(/\/+$/, "");
+  const path = endpoint.replace(/^\/+/, "");
+  return `${base}/${path}`;
 }
 
-export async function fetchFromCms<T>(endpoint: string, fallbackData: T): Promise<T> {
+export async function fetchFromCms<T>(endpoint: string): Promise<T> {
   if (!cmsUrl) {
-    console.warn("[fetchFromCms] NEXT_PUBLIC_CMS_URL is not set. Falling back to dummy data.")
-    return fallbackData
+    throw new Error("CMS URL is not configured. Please set NEXT_PUBLIC_CMS_URL");
   }
 
   try {
-    const response = await axios.get<T>(resolveCmsUrl(endpoint), {
-      timeout: 5000,
-    })
+    const response = await axios.get(resolveCmsUrl(endpoint), {
+      timeout: 8000,
+      headers: { "Content-Type": "application/json" },
+    });
 
-    const backendData = response.data
-    const useBackend = backendData === true || Boolean(backendData)
+    const data = response.data;
 
-    if (useBackend) {
-      return backendData as T
+    if (data && typeof data === "object" && Array.isArray(data.docs)) {
+      console.log("✅ CMS data loaded successfully");
+      return data as T;
     }
 
-    return fallbackData
-  } catch (error) {
-    console.warn("[fetchFromCms] request failed, using fallback data.", error)
-    return fallbackData
+    throw new Error("Invalid CMS response format");
+  } catch (error: any) {
+    console.error("❌ fetchFromCms failed:", error.message || error);
+    throw error; // Re-throw so component can handle it
   }
 }

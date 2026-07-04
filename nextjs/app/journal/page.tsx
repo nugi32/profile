@@ -1,9 +1,11 @@
 import { JournalCard } from "../../components/cards/journal-card";
 import { SectionHeader } from "../../components/layout/section-header";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
-import { journalEntries } from "../../data/journal";
+import { getNotionJournalEntries } from "@/lib/notion";
 
-export default function JournalPage() {
+export default async function JournalPage() {
+  const entries = await getNotionJournalEntries();
+
   return (
     <section className="container py-24">
       <SectionHeader
@@ -12,7 +14,7 @@ export default function JournalPage() {
         description="A chronological archive of research notes, ideas, and observations from the lab."
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {journalEntries.map((entry, index) => (
+        {entries.map((entry, index) => (
           <ScrollReveal key={entry.slug} delay={index * 0.05}>
             <JournalCard entry={entry} />
           </ScrollReveal>

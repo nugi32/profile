@@ -20,6 +20,7 @@ export const projects: Project[] = [
     demoUrl: "https://team-chain-v2.vercel.app",
     accent: "ice",
     featured: true,
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/John_Doe%2C_born_John_Nommensen_Duchac.jpg/960px-John_Doe%2C_born_John_Nommensen_Duchac.jpg",
   },
   {
     slug: "onchain-scanner",

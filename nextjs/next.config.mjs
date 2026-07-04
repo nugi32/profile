@@ -1,19 +1,19 @@
-/*import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here *
-};
-
-export default nextConfig;*/
-
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
     mdxRs: true,
   },
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: '**', // for production
+      },
+    ],
   },
 };
 

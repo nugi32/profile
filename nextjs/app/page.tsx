@@ -11,9 +11,45 @@ import { ProgressTracker } from "../components/sections/progress-tracker";
 import { LearningDashboard } from "../components/sections/learning-dashboard";
 import { Separator } from "../components/ui/separator";
 import { getNotionJournalEntries } from "@/lib/notion";
+import { fetchFromCms } from "@/lib/fetcher";
+import type { Book, LearningItem, Paper, Metric, MonthlyDeepWork, QuarterlyReading } from "@/types";
+
+async function fetchDashboardData() {
+  try {
+    const [learningRes, booksRes, papersRes, metricsRes, deepWorkRes, readingRes] = await Promise.all([
+      fetchFromCms<{ docs: LearningItem[] }>("api/learning-items?depth=0").catch(() => ({ docs: [] })),
+      fetchFromCms<{ docs: Book[] }>("api/books?depth=0").catch(() => ({ docs: [] })),
+      fetchFromCms<{ docs: Paper[] }>("api/papers?depth=0").catch(() => ({ docs: [] })),
+      fetchFromCms<{ docs: Metric[] }>("api/metrics?depth=0").catch(() => ({ docs: [] })),
+      fetchFromCms<{ docs: MonthlyDeepWork[] }>("api/monthly-deep-work?depth=0").catch(() => ({ docs: [] })),
+      fetchFromCms<{ docs: QuarterlyReading[] }>("api/quarterly-reading?depth=0").catch(() => ({ docs: [] })),
+    ]);
+
+    return {
+      learning: learningRes?.docs ?? [],
+      books: booksRes?.docs ?? [],
+      papers: papersRes?.docs ?? [],
+      metrics: metricsRes?.docs ?? [],
+      deepWork: deepWorkRes?.docs ?? [],
+      reading: readingRes?.docs ?? [],
+    };
+  } catch {
+    return {
+      learning: [],
+      books: [],
+      papers: [],
+      metrics: [],
+      deepWork: [],
+      reading: [],
+    };
+  }
+}
 
 export default async function HomePage() {
-  const journalEntries = await getNotionJournalEntries();
+  const [journalEntries, dashboardData] = await Promise.all([
+    getNotionJournalEntries(),
+    fetchDashboardData(),
+  ]);
 
   return (
     <>
@@ -35,9 +71,17 @@ export default async function HomePage() {
       <Separator />
       <WeirdThoughts />
       <Separator />
-      <ProgressTracker />
+      <ProgressTracker 
+        metrics={dashboardData.metrics} 
+        deepWork={dashboardData.deepWork}
+        reading={dashboardData.reading}
+      />
       <Separator />
-      <LearningDashboard />
+      <LearningDashboard 
+        learning={dashboardData.learning}
+        books={dashboardData.books}
+        papers={dashboardData.papers}
+      />
     </>
   );
 }

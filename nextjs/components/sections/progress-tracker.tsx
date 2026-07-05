@@ -5,17 +5,24 @@ import { ScrollReveal } from "../ui/scroll-reveal";
 import { MetricCard } from "../cards/metric-card";
 import { DeepWorkChart } from "../charts/deep-work-chart";
 import { ReadingChart } from "../charts/reading-chart";
-import { useCmsData } from "@/hooks/useCmsData";
 import type { Metric, MonthlyDeepWork, QuarterlyReading } from "@/types";
 
-export function ProgressTracker() {
-  const metrics = useCmsData<Metric>("api/metrics");
-  const deepWork = useCmsData<MonthlyDeepWork>("api/monthly-deep-work");
-  const reading = useCmsData<QuarterlyReading>("api/quarterly-reading");
+interface ProgressTrackerProps {
+  metrics: Metric[] | null;
+  deepWork: MonthlyDeepWork[] | null;
+  reading: QuarterlyReading[] | null;
+  error?: string | null;
+  loading?: boolean;
+}
 
-  const loading = metrics.loading || deepWork.loading || reading.loading;
-  const error = metrics.error || deepWork.error || reading.error;
-  const noData = !metrics.data?.length || !deepWork.data?.length || !reading.data?.length;
+export function ProgressTracker({ 
+  metrics, 
+  deepWork, 
+  reading, 
+  error, 
+  loading 
+}: ProgressTrackerProps) {
+  const noData = !metrics?.length || !deepWork?.length || !reading?.length;
 
   if (error) {
     return (
@@ -71,7 +78,7 @@ export function ProgressTracker() {
         description="Self-development, measured. Numbers that only matter because they compound."
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {(metrics.data ?? []).map((metric, i) => (
+        {(metrics ?? []).map((metric, i) => (
           <ScrollReveal key={metric.label} delay={i * 0.04}>
             <MetricCard metric={metric} />
           </ScrollReveal>
@@ -79,10 +86,10 @@ export function ProgressTracker() {
       </div>
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
         <ScrollReveal>
-          <DeepWorkChart data={deepWork.data ?? []} />
+          <DeepWorkChart data={deepWork ?? []} />
         </ScrollReveal>
         <ScrollReveal delay={0.05}>
-          <ReadingChart data={reading.data ?? []} />
+          <ReadingChart data={reading ?? []} />
         </ScrollReveal>
       </div>
     </section>

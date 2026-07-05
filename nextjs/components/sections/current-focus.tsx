@@ -7,7 +7,7 @@ import { useCmsData } from "@/hooks/useCmsData";
 import type { CurrentFocusItem } from "@/types";
 
 export function CurrentFocus() {
-  const { data, loading, error, noData } = useCmsData<CurrentFocusItem>("api/current-focus");
+  const { data, loading, error, noData } = useCmsData<CurrentFocusItem>("api/current-focus?depth=1");
 
   if (error) {
     return (

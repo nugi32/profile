@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import type { TimelineYear } from "@/types";
 
 export function Timeline() {
-  const { data, loading, error, noData } = useCmsData<TimelineYear>("api/timeline");
+  const { data, loading, error, noData } = useCmsData<TimelineYear>("api/timeline?depth=1");
   const [active, setActive] = useState(0);
 
   const normalizedTimeline = (data ?? []).map((entry) => ({

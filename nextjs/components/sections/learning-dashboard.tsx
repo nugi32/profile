@@ -3,8 +3,15 @@
 import { SectionHeader } from "../layout/section-header";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { ProgressBar } from "../ui/progress-bar";
-import { useCmsData } from "@/hooks/useCmsData";
 import type { Book, LearningItem, Paper } from "@/types";
+
+interface LearningDashboardProps {
+  learning: LearningItem[] | null;
+  books: Book[] | null;
+  papers: Paper[] | null;
+  error?: string | null;
+  loading?: boolean;
+}
 
 function QueueList({
   title,
@@ -33,18 +40,14 @@ function QueueList({
   );
 }
 
-export function LearningDashboard() {
-  const learning = useCmsData<LearningItem>("api/learning-items");
-  const books = useCmsData<Book>("api/books");
-  const papers = useCmsData<Paper>("api/papers");
-
-  const loading = learning.loading || books.loading || papers.loading;
-  const error = learning.error || books.error || papers.error;
-  const noData = !learning.data?.length || !books.data?.length || !papers.data?.length;
-
-  const learningItems = learning.data ?? [];
-  const booksItems = books.data ?? [];
-  const papersItems = papers.data ?? [];
+export function LearningDashboard({ 
+  learning, 
+  books, 
+  papers, 
+  error, 
+  loading 
+}: LearningDashboardProps) {
+  const noData = !learning?.length || !books?.length || !papers?.length;
 
   if (error) {
     return (
@@ -91,6 +94,10 @@ export function LearningDashboard() {
       </section>
     );
   }
+
+  const learningItems = learning ?? [];
+  const booksItems = books ?? [];
+  const papersItems = papers ?? [];
 
   return (
     <section className="container py-24">

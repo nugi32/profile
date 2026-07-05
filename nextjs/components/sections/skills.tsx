@@ -7,7 +7,7 @@ import { useCmsData } from "@/hooks/useCmsData";
 import type { SkillCategory } from "@/types";
 
 export function Skills() {
-  const { data, loading, error, noData } = useCmsData<SkillCategory>("api/skills");
+  const { data, loading, error, noData } = useCmsData<SkillCategory>("api/skills?depth=1");
 
   if (error) {
     return (

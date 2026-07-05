@@ -9,7 +9,7 @@ import { useCmsData } from "@/hooks/useCmsData";
 import type { Project } from "@/types";
 
 export default function ProjectPage({ params }: { params: { slug: string } }) {
-  const { data, loading, error, noData } = useCmsData<Project>("api/projects");
+  const { data, loading, error, noData } = useCmsData<Project>("api/projects?depth=1");
 
   const project = useMemo(
     () => data?.find((project) => project.slug === params.slug),

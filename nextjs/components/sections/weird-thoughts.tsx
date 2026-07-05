@@ -7,7 +7,7 @@ import { useCmsData } from "@/hooks/useCmsData";
 import type { WeirdThought } from "@/types";
 
 export function WeirdThoughts() {
-  const { data, loading, error, noData } = useCmsData<WeirdThought>("api/weird-thoughts");
+  const { data, loading, error, noData } = useCmsData<WeirdThought>("api/weird-thoughts?depth=0");
 
   if (error) {
     return (

@@ -19,7 +19,7 @@ type ProfileDoc = {
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_URL || "http://localhost:3001";
 
 export function Hero() {
-  const { data, loading, error, noData } = useCmsData<ProfileDoc>("api/profile");
+  const { data, loading, error, noData } = useCmsData<ProfileDoc>("api/profile?depth=1");
   const profileData = data?.[0];
   const name = profileData?.name?.trim() || "";
 

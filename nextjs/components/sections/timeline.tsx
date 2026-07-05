@@ -11,9 +11,25 @@ export function Timeline() {
   const { data, loading, error, noData } = useCmsData<TimelineYear>("api/timeline");
   const [active, setActive] = useState(0);
 
+  const normalizedTimeline = (data ?? []).map((entry) => ({
+    ...entry,
+    items:
+      entry.items?.map((item) => {
+        if (typeof item === "string") {
+          return item;
+        }
+
+        return (item as { item?: string } | null)?.item || "";
+      }) ?? [],
+  }));
+
+  // Display the timeline in chronological order (oldest first).
+  const displayTimeline = normalizedTimeline.slice().reverse();
+
   useEffect(() => {
-    if (data?.length) {
-      setActive(data.length - 1);
+    if (displayTimeline.length) {
+      // Default active to the most recent year (last item in the displayed list).
+      setActive(displayTimeline.length - 1);
     }
   }, [data]);
 
@@ -63,18 +79,6 @@ export function Timeline() {
     );
   }
 
-  const normalizedTimeline = (data ?? []).map((entry) => ({
-    ...entry,
-    items:
-      entry.items?.map((item) => {
-        if (typeof item === "string") {
-          return item;
-        }
-
-        return (item as { item?: string } | null)?.item || "";
-      }) ?? [],
-  }));
-
   return (
     <section className="container py-24">
       <SectionHeader
@@ -84,7 +88,7 @@ export function Timeline() {
       />
 
       <div className="flex flex-wrap gap-2">
-        {normalizedTimeline.map((entry, i) => (
+        {displayTimeline.map((entry, i) => (
           <button
             key={entry.year}
             onClick={() => setActive(i)}
@@ -101,28 +105,35 @@ export function Timeline() {
       </div>
 
       <div className="relative mt-10 border-l border-panel-border pl-8">
-        {normalizedTimeline.map((entry, i) => (
+        {displayTimeline.map((entry, i) => (
           <motion.div
             key={entry.year}
             className="relative mb-10 last:mb-0"
             initial={false}
             animate={{ opacity: active === i ? 1 : 0.4 }}
           >
-            <span
-              className={cn(
-                "absolute -left-[41px] top-1 h-3 w-3 rounded-full border-2",
-                active === i
-                  ? "border-ice bg-ice"
-                  : "border-panel-border bg-background"
-              )}
-            />
+            <div className="absolute -left-[41px] top-1 h-3 w-3 flex items-center justify-center">
+              <span
+                className={cn(
+                  "block h-3 w-3 rounded-full border-2",
+                  active === i ? "border-ice bg-background" : "border-panel-border bg-background"
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute block rounded-full",
+                  active === i ? "h-2 w-2 bg-ice" : "h-1.5 w-1.5 bg-ice/50"
+                )}
+              />
+            </div>
             <p className="font-mono text-xs uppercase tracking-wider text-ice">
               {entry.year} — {entry.theme}
             </p>
             <ul className="mt-2 flex flex-col gap-1">
               {entry.items.map((item) => (
-                <li key={item} className="text-foreground/85">
-                  {item}
+                <li key={item} className="text-foreground/85 flex items-start gap-3">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-foreground/85" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>

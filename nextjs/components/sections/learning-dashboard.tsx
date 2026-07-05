@@ -1,15 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { SectionHeader } from "../layout/section-header";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { ProgressBar } from "../ui/progress-bar";
-import { fetchFromCms } from "@/lib/fetcher";
+import { useCmsData } from "@/hooks/useCmsData";
 import type { Book, LearningItem, Paper } from "@/types";
-
-type CmsCollectionResponse<T> = {
-  docs: T[];
-};
 
 function QueueList({
   title,
@@ -39,58 +34,17 @@ function QueueList({
 }
 
 export function LearningDashboard() {
-  const [learningData, setLearningData] = useState<LearningItem[] | null>(null);
-  const [booksData, setBooksData] = useState<Book[] | null>(null);
-  const [papersData, setPapersData] = useState<Paper[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
+  const learning = useCmsData<LearningItem>("api/learning-items");
+  const books = useCmsData<Book>("api/books");
+  const papers = useCmsData<Paper>("api/papers");
 
-  useEffect(() => {
-    let mounted = true;
+  const loading = learning.loading || books.loading || papers.loading;
+  const error = learning.error || books.error || papers.error;
+  const noData = !learning.data?.length || !books.data?.length || !papers.data?.length;
 
-    const fetchDashboardData = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
-
-        const [learningResponse, booksResponse, papersResponse] = await Promise.all([
-          fetchFromCms<CmsCollectionResponse<LearningItem>>("api/learning-items"),
-          fetchFromCms<CmsCollectionResponse<Book>>("api/books"),
-          fetchFromCms<CmsCollectionResponse<Paper>>("api/papers"),
-        ]);
-
-        if (!mounted) return;
-
-        const learningItems = learningResponse.docs ?? [];
-        const books = booksResponse.docs ?? [];
-        const papers = papersResponse.docs ?? [];
-
-        setLearningData(learningItems);
-        setBooksData(books);
-        setPapersData(papers);
-
-        if (!learningItems.length || !books.length || !papers.length) {
-          setNoData(true);
-        }
-      } catch (err: any) {
-        if (!mounted) return;
-        console.error(err);
-        setError(err.message || "Failed to load learning dashboard data");
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchDashboardData();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const learningItems = learning.data ?? [];
+  const booksItems = books.data ?? [];
+  const papersItems = papers.data ?? [];
 
   if (error) {
     return (
@@ -152,7 +106,7 @@ export function LearningDashboard() {
               Currently Learning
             </h3>
             <div className="mt-4 flex flex-col gap-4">
-              {learningData!.map((item) => (
+              {learningItems.map((item) => (
                 <div key={item.topic}>
                   <div className="mb-1.5 flex justify-between font-mono text-xs text-muted">
                     <span className="text-foreground/80">{item.topic}</span>
@@ -166,11 +120,11 @@ export function LearningDashboard() {
         </ScrollReveal>
 
         <ScrollReveal delay={0.05} className="lg:col-span-1">
-          <QueueList title="Reading Queue" items={booksData!} />
+          <QueueList title="Reading Queue" items={booksItems} />
         </ScrollReveal>
 
         <ScrollReveal delay={0.1} className="lg:col-span-1">
-          <QueueList title="Research Queue" items={papersData!} />
+          <QueueList title="Research Queue" items={papersItems} />
         </ScrollReveal>
       </div>
     </section>

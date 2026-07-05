@@ -14,7 +14,7 @@ export function useCmsData<T>(endpoint: string) {
   const [noData, setNoData] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
+    const controller = new AbortController();
 
     async function loadCmsData() {
       try {
@@ -22,30 +22,26 @@ export function useCmsData<T>(endpoint: string) {
         setNoData(false);
         setLoading(true);
 
-        const response = await fetchFromCms<CmsResponse<T>>(endpoint);
+        const response = await fetchFromCms<CmsResponse<T>>(endpoint, controller.signal);
 
         if (!response?.docs || !Array.isArray(response.docs) || response.docs.length === 0) {
-          if (!mounted) return;
           setNoData(true);
           return;
         }
 
-        if (mounted) {
-          setData(response.docs);
-        }
+        setData(response.docs);
       } catch (err: any) {
-        if (!mounted) return;
+        if (err.name === "CanceledError" || err.name === "AbortError") return; // ignore aborted/duplicate calls
         setError(err?.message || "Failed to load data from CMS");
       } finally {
-        if (!mounted) return;
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     }
 
     loadCmsData();
 
     return () => {
-      mounted = false;
+      controller.abort();
     };
   }, [endpoint]);
 

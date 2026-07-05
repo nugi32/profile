@@ -1,60 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SectionHeader } from "../layout/section-header";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { ProjectCard } from "../cards/project-card";
 import { Button } from "../ui/button";
-import { fetchFromCms } from "@/lib/fetcher";
+import { useCmsData } from "@/hooks/useCmsData";
 import type { Project } from "@/types";
 
-type CmsCollectionResponse<T> = {
-  docs: T[];
-};
-
 export function FeaturedProjects() {
-  const [data, setData] = useState<Project[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchProjects = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
-
-        const response = await fetchFromCms<CmsCollectionResponse<Project>>("api/projects");
-        if (!mounted) return;
-
-        const projects = response.docs ?? [];
-        if (!projects.length) {
-          setNoData(true);
-          return;
-        }
-
-        setData(projects);
-      } catch (err: any) {
-        if (!mounted) return;
-        console.error(err);
-        setError(err.message || "Failed to load featured projects");
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchProjects();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { data, loading, error, noData } = useCmsData<Project>("api/projects");
 
   if (error) {
     return (
@@ -102,7 +57,7 @@ export function FeaturedProjects() {
     );
   }
 
-  const featured = data.filter((project) => project.featured);
+  const featured = (data ?? []).filter((project) => project.featured);
 
   return (
     <section id="projects" className="container py-24">

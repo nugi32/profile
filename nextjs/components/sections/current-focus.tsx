@@ -1,58 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { SectionHeader } from "../layout/section-header";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { getIcon } from "@/lib/icon-map";
-import { fetchFromCms } from "@/lib/fetcher";
+import { useCmsData } from "@/hooks/useCmsData";
 import type { CurrentFocusItem } from "@/types";
 
-type CmsCollectionResponse<T> = {
-  docs: T[];
-};
-
 export function CurrentFocus() {
-  const [data, setData] = useState<CurrentFocusItem[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchCurrentFocus = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
-
-        const response = await fetchFromCms<CmsCollectionResponse<CurrentFocusItem>>("api/current-focus");
-        if (!mounted) return;
-
-        const items = response.docs ?? [];
-        if (!items.length) {
-          setNoData(true);
-          return;
-        }
-
-        setData(items);
-      } catch (err: any) {
-        if (!mounted) return;
-        console.error(err);
-        setError(err.message || "Failed to load current focus items");
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchCurrentFocus();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { data, loading, error, noData } = useCmsData<CurrentFocusItem>("api/current-focus");
 
   if (error) {
     return (
@@ -108,7 +63,7 @@ export function CurrentFocus() {
         description="What's actively occupying the research queue."
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((item, i) => {
+        {(data ?? []).map((item, i) => {
           const Icon = getIcon(item.icon);
           return (
             <ScrollReveal key={item.title} delay={i * 0.05}>

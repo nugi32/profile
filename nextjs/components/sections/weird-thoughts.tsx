@@ -1,58 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { SectionHeader } from "../layout/section-header";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { QuoteCard } from "../cards/quote-card";
-import { fetchFromCms } from "@/lib/fetcher";
+import { useCmsData } from "@/hooks/useCmsData";
 import type { WeirdThought } from "@/types";
 
-type CmsCollectionResponse<T> = {
-  docs: T[];
-};
-
 export function WeirdThoughts() {
-  const [data, setData] = useState<WeirdThought[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchWeirdThoughts = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
-
-        const response = await fetchFromCms<CmsCollectionResponse<WeirdThought>>("api/weird-thoughts");
-        if (!mounted) return;
-
-        const thoughts = response.docs ?? [];
-        if (!thoughts.length) {
-          setNoData(true);
-          return;
-        }
-
-        setData(thoughts);
-      } catch (err: any) {
-        if (!mounted) return;
-        console.error(err);
-        setError(err.message || "Failed to load weird thoughts");
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchWeirdThoughts();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { data, loading, error, noData } = useCmsData<WeirdThought>("api/weird-thoughts");
 
   if (error) {
     return (
@@ -108,7 +63,7 @@ export function WeirdThoughts() {
         description="Strange, abstract ideas that didn't fit anywhere else but were worth keeping."
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((thought, i) => (
+        {(data ?? []).map((thought, i) => (
           <ScrollReveal key={thought.quote} delay={i * 0.05}>
             <QuoteCard thought={thought} />
           </ScrollReveal>

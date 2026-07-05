@@ -1,71 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { SectionHeader } from "../layout/section-header";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { MetricCard } from "../cards/metric-card";
 import { DeepWorkChart } from "../charts/deep-work-chart";
 import { ReadingChart } from "../charts/reading-chart";
-import { fetchFromCms } from "@/lib/fetcher";
+import { useCmsData } from "@/hooks/useCmsData";
 import type { Metric, MonthlyDeepWork, QuarterlyReading } from "@/types";
 
-type CmsCollectionResponse<T> = {
-  docs: T[];
-};
-
 export function ProgressTracker() {
-  const [metricsData, setMetricsData] = useState<Metric[] | null>(null);
-  const [deepWorkData, setDeepWorkData] = useState<MonthlyDeepWork[] | null>(null);
-  const [readingData, setReadingData] = useState<QuarterlyReading[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
+  const metrics = useCmsData<Metric>("api/metrics");
+  const deepWork = useCmsData<MonthlyDeepWork>("api/monthly-deep-work");
+  const reading = useCmsData<QuarterlyReading>("api/quarterly-reading");
 
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchProgressData = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
-
-        const [metricsResponse, deepWorkResponse, readingResponse] = await Promise.all([
-          fetchFromCms<CmsCollectionResponse<Metric>>("api/metrics"),
-          fetchFromCms<CmsCollectionResponse<MonthlyDeepWork>>("api/monthly-deep-work"),
-          fetchFromCms<CmsCollectionResponse<QuarterlyReading>>("api/quarterly-reading"),
-        ]);
-
-        if (!mounted) return;
-
-        const metrics = metricsResponse.docs ?? [];
-        const deepWork = deepWorkResponse.docs ?? [];
-        const reading = readingResponse.docs ?? [];
-
-        setMetricsData(metrics);
-        setDeepWorkData(deepWork);
-        setReadingData(reading);
-
-        if (!metrics.length || !deepWork.length || !reading.length) {
-          setNoData(true);
-        }
-      } catch (err: any) {
-        if (!mounted) return;
-        console.error(err);
-        setError(err.message || "Failed to load progress tracker data");
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchProgressData();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const loading = metrics.loading || deepWork.loading || reading.loading;
+  const error = metrics.error || deepWork.error || reading.error;
+  const noData = !metrics.data?.length || !deepWork.data?.length || !reading.data?.length;
 
   if (error) {
     return (
@@ -121,7 +71,7 @@ export function ProgressTracker() {
         description="Self-development, measured. Numbers that only matter because they compound."
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {metricsData!.map((metric, i) => (
+        {(metrics.data ?? []).map((metric, i) => (
           <ScrollReveal key={metric.label} delay={i * 0.04}>
             <MetricCard metric={metric} />
           </ScrollReveal>
@@ -129,10 +79,10 @@ export function ProgressTracker() {
       </div>
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
         <ScrollReveal>
-          <DeepWorkChart data={deepWorkData!} />
+          <DeepWorkChart data={deepWork.data ?? []} />
         </ScrollReveal>
         <ScrollReveal delay={0.05}>
-          <ReadingChart data={readingData!} />
+          <ReadingChart data={reading.data ?? []} />
         </ScrollReveal>
       </div>
     </section>

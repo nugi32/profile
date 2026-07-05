@@ -3,58 +3,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { SectionHeader } from "../layout/section-header";
-import { fetchFromCms } from "@/lib/fetcher";
+import { useCmsData } from "@/hooks/useCmsData";
 import { cn } from "@/lib/utils";
 import type { TimelineYear } from "@/types";
 
-type CmsCollectionResponse<T> = {
-  docs: T[];
-};
-
 export function Timeline() {
-  const [data, setData] = useState<TimelineYear[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
+  const { data, loading, error, noData } = useCmsData<TimelineYear>("api/timeline");
   const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchTimeline = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
-
-        const response = await fetchFromCms<CmsCollectionResponse<TimelineYear>>("api/timeline");
-        if (!mounted) return;
-
-        const timelineEntries = response.docs ?? [];
-        if (!timelineEntries.length) {
-          setNoData(true);
-          setData(null);
-          return;
-        }
-
-        setData(timelineEntries);
-      } catch (err: any) {
-        if (!mounted) return;
-        console.error(err);
-        setError(err.message || "Failed to load timeline data");
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchTimeline();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (data?.length) {
@@ -108,7 +63,7 @@ export function Timeline() {
     );
   }
 
-  const normalizedTimeline = data.map((entry) => ({
+  const normalizedTimeline = (data ?? []).map((entry) => ({
     ...entry,
     items:
       entry.items?.map((item) => {

@@ -5,65 +5,29 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { AuroraGlow } from "../backgrounds/aurora-glow";
-import { fetchFromCms } from "@/lib/fetcher";
-import { useEffect, useState } from "react";
+import { useCmsData } from "@/hooks/useCmsData";
 
-type ProfileResponse = {
-  docs: Array<{
-    name?: string;
-    bio?: string;
-    photo?: {
-      url: string;
-      alt?: string;
-    } | null;
-  }>;
+type ProfileDoc = {
+  name?: string;
+  bio?: string;
+  photo?: {
+    url: string;
+    alt?: string;
+  } | null;
 };
 
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_URL || "http://localhost:3001";
 
 export function Hero() {
-  const [imageSrc, setImageSrc] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [noData, setNoData] = useState(false);
+  const { data, loading, error, noData } = useCmsData<ProfileDoc>("api/profile");
+  const profileData = data?.[0];
+  const name = profileData?.name?.trim() || "";
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setError("");
-        setNoData(false);
-        setLoading(true);
+  let imageSrc = profileData?.photo?.url || "";
 
-        const response = await fetchFromCms<ProfileResponse>("api/profile");
-
-        const profileData = response.docs?.[0];
-
-        if (!profileData) {
-          setNoData(true);
-          return;
-        }
-
-        let photoUrl = profileData.photo?.url || "";
-
-        if (photoUrl) {
-          if (!photoUrl.startsWith("http")) {
-            photoUrl = `${CMS_BASE_URL}/${photoUrl}`;
-          }
-        }
-
-        setImageSrc(photoUrl);
-        setName(profileData.name?.trim() || "");
-      } catch (err: any) {
-        console.error(err);
-        setError(err.message || "Failed to load profile");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+  if (imageSrc && !imageSrc.startsWith("http")) {
+    imageSrc = `${CMS_BASE_URL}/${imageSrc}`;
+  }
 
   // Error state
   if (error) {

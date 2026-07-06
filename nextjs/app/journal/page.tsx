@@ -3,6 +3,8 @@ import { SectionHeader } from "../../components/layout/section-header";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import { getNotionJournalEntries } from "@/lib/notion";
 
+export const dynamic = "force-dynamic";
+
 export default async function JournalPage() {
   const entries = await getNotionJournalEntries();
 

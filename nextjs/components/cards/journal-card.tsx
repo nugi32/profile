@@ -9,9 +9,8 @@ export function JournalCard({ entry }: { entry: JournalEntry }) {
       href={`/journal/${entry.slug}`}
       className="group flex flex-col gap-3 rounded-2xl border border-panel-border bg-panel/50 p-6 transition-colors hover:border-ice/40"
     >
-      <div className="flex items-center justify-between font-mono text-xs text-muted">
+      <div className="flex items-center font-mono text-xs text-muted">
         <span>{formatDate(entry.date)}</span>
-        <span>{entry.readingTime} min read</span>
       </div>
       <h3 className="font-display text-xl text-foreground/95 group-hover:text-ice">{entry.title}</h3>
       <p className="text-sm leading-relaxed text-muted">{entry.description}</p>

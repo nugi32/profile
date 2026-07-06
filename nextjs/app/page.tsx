@@ -14,6 +14,8 @@ import { getNotionJournalEntries } from "@/lib/notion";
 import { fetchFromCms } from "@/lib/fetcher";
 import type { Book, LearningItem, Paper, Metric, MonthlyDeepWork, QuarterlyReading } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 async function fetchDashboardData() {
   try {
     const [learningRes, booksRes, papersRes, metricsRes, deepWorkRes, readingRes] = await Promise.all([

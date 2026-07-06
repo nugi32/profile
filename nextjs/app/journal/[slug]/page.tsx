@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDate, splitMarkdownLines } from "@/lib/utils";
-import { getNotionJournalEntryBySlug, getNotionJournalEntries } from "@/lib/notion";
+import { getNotionJournalEntryBySlug } from "@/lib/notion";
 import BlockRenderer from "../../notion/BlockRenderer";
 import { SectionHeader } from "../../../components/layout/section-header";
 import { Tag } from "../../../components/ui/tag";
 
-export async function generateStaticParams() {
-  const entries = await getNotionJournalEntries();
-  return entries.map((entry) => ({ slug: entry.slug }));
-}
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
 function renderMarkdown(content: string) {
   return splitMarkdownLines(content).map((line, index) => {
@@ -45,19 +43,29 @@ function renderMarkdown(content: string) {
   });
 }
 
-function NotionBlockTree({ blocks }: { blocks: any[] }) {
+function NotionBlockTree({ blocks, skipFirstHeading = false }: { blocks: any[]; skipFirstHeading?: boolean }) {
+  let skipped = false;
+
   return (
     <>
-      {blocks.map((block) => (
-        <div key={block.id}>
-          <BlockRenderer block={block} />
-          {block.children && block.type !== "table" && block.children.length > 0 && (
-            <div className="ml-6">
-              <NotionBlockTree blocks={block.children} />
-            </div>
-          )}
-        </div>
-      ))}
+      {blocks.map((block) => {
+        // Skip the first heading_1 if it matches the title
+        if (skipFirstHeading && !skipped && block.type === "heading_1") {
+          skipped = true;
+          return null;
+        }
+
+        return (
+          <div key={block.id}>
+            <BlockRenderer block={block} />
+            {block.children && block.type !== "table" && block.children.length > 0 && (
+              <div className="ml-6">
+                <NotionBlockTree blocks={block.children} />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </>
   );
 }
@@ -76,10 +84,8 @@ export default async function JournalEntryPage({
   return (
     <section className="container py-24">
       <SectionHeader eyebrow="Note" title={entry.title} />
-      <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-muted">
+      <div className="mb-6 text-sm text-muted">
         <span>{formatDate(entry.date)}</span>
-        <span>·</span>
-        <span>{entry.readingTime} min read</span>
       </div>
       <div className="mb-6 flex flex-wrap gap-2">
         {entry.tags.map((tag) => (
@@ -94,7 +100,7 @@ export default async function JournalEntryPage({
       <div className="rounded-3xl border border-panel-border bg-panel/50 p-8 text-foreground">
         {entry.contentBlocks && entry.contentBlocks.length > 0 ? (
           <div className="space-y-2">
-            <NotionBlockTree blocks={entry.contentBlocks} />
+            <NotionBlockTree blocks={entry.contentBlocks} skipFirstHeading={true} />
           </div>
         ) : (
           renderMarkdown(entry.content)

@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  Design tokens                                                      */
+/*  Channels are space-separated RGB so Tailwind can add alpha.        */
+/* ------------------------------------------------------------------ */
+@layer base {
+  :root {
+    --bg: 246 244 255;
+    --ink: 27 22 51;
+    --card: 255 255 255;
+    --soft: 91 84 122;
+    --line: 27 22 51;
+    --shadow: 27 22 51;
+    --on-accent: 27 22 51;
+
+    --grape: 108 77 255;
+    --tangerine: 255 122 61;
+    --bubblegum: 255 95 162;
+    --sun: 255 216 77;
+    --mint: 46 216 163;
+    --sky: 69 196 255;
+
+    --grape-tint: 228 222 255;
+    --tangerine-tint: 255 228 211;
+    --bubblegum-tint: 255 222 238;
+    --sun-tint: 255 246 196;
+    --mint-tint: 208 246 233;
+    --sky-tint: 211 239 255;
+  }
+
+  .dark {
+    --bg: 21 17 43;
+    --ink: 242 238 255;
+    --card: 34 28 68;
+    --soft: 178 170 214;
+    --line: 190 180 245;
+    --shadow: 108 77 255;
+
+    --grape-tint: 55 44 118;
+    --tangerine-tint: 88 48 34;
+    --bubblegum-tint: 92 38 68;
+    --sun-tint: 86 72 22;
+    --mint-tint: 24 76 62;
+    --sky-tint: 24 64 88;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-bg text-ink antialiased;
+    /* A quiet dot grid: the page reads like a sketchbook, not a document. */
+    background-image: radial-gradient(rgb(var(--ink) / 0.08) 1.2px, transparent 1.4px);
+    background-size: 22px 22px;
+  }
+
+  ::selection {
+    background: rgb(var(--sun));
+    color: rgb(var(--on-accent));
+  }
+
+  :focus-visible {
+    outline: 3px solid rgb(var(--grape));
+    outline-offset: 3px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--bg));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--line) / 0.35);
+    border-radius: 999px;
+    border: 3px solid rgb(var(--bg));
+  }
+}
+
+@layer components {
+  /* The house style: a thick outline plus a hard offset shadow. */
+  .sticker {
+    @apply rounded-3xl border-2 border-line bg-card shadow-pop;
+  }
+
+  /* Lift on hover, press on click. Reacts to the visitor, never on its own. */
+  .pressable {
+    @apply transition-[transform,box-shadow] duration-150 ease-out;
+  }
+  .pressable:hover {
+    @apply -translate-x-0.5 -translate-y-0.5 shadow-pop-lg;
+  }
+  .pressable:active {
+    @apply translate-x-[3px] translate-y-[3px] shadow-none;
+  }
+
+  /* Small pill-shaped controls: same idea as .sticker, lighter shadow. */
+  .chip {
+    @apply rounded-full border-2 border-line bg-card shadow-pop-sm transition-[transform,box-shadow] duration-150 ease-out;
+  }
+  .chip:hover {
+    @apply -translate-x-0.5 -translate-y-0.5 shadow-pop;
+  }
+  .chip:active {
+    @apply translate-x-[2px] translate-y-[2px] shadow-none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Resume view: "Print / Save as PDF" goes through this stylesheet, so it
+   always prints as a clean black-on-white document whatever the theme. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  :root,
+  .dark {
+    --bg: 255 255 255;
+    --ink: 17 24 39;
+    --card: 255 255 255;
+    --soft: 75 85 99;
+    --line: 17 24 39;
+    --shadow: 255 255 255;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+  }
+
+  a {
+    color: #111827 !important;
+    text-decoration: none !important;
+  }
+}
